@@ -64,6 +64,7 @@ class KMeans:
         # If your methods need any other prameter you can add it to the options dictionary
         self.options = options
 
+        "hola"
         #############################################################
         ##  THIS FUNCTION CAN BE MODIFIED FROM THIS POINT, if needed
         #############################################################
