@@ -34,11 +34,13 @@ class KMeans:
                     if matrix has more than 2 dimensions, the dimensionality of the smaple space is the length of
                     the last dimension
         """
-        #######################################################
-        ##  YOU MUST REMOVE THE REST OF THE CODE OF THIS FUNCTION
-        ##  AND CHANGE FOR YOUR OWN CODE
-        #######################################################
-        self.X = np.random.rand(100, 5)
+        #Operation to calculate N = F·C
+        x_shape = X.shape #shape of the matrix
+        F = x_shape[0] #first value of the shape list (lists)
+        C = x_shape[1] #second value of the shape list (columns)
+        N = F * C #Calculate N
+        
+        self.X = np.reshape(X, (N, 3)) #Reshape matrix 
 
 
 
@@ -64,7 +66,6 @@ class KMeans:
         # If your methods need any other prameter you can add it to the options dictionary
         self.options = options
 
-        "hola"
         #############################################################
         ##  THIS FUNCTION CAN BE MODIFIED FROM THIS POINT, if needed
         #############################################################
