@@ -78,16 +78,31 @@ class KMeans:
         Initialization of centroids
         """
 
-        #######################################################
-        ##  YOU MUST REMOVE THE REST OF THE CODE OF THIS FUNCTION
-        ##  AND CHANGE FOR YOUR OWN CODE
-        #######################################################
-        if self.options['km_init'].lower() == 'first':
+        #No use if K<=0 because we cannot initialize the centroids
+        if self.K <=0:
+            return
+        
+        if self.options['km_init'].lower() == 'first': #The first K dots
+            centroids = [] #Using this list both like iterator and store the centroids to treat them
+            for dotX in self.X:
+                repeated = False
+                for dotC in centroids: #Checking if stored centroids are repeated
+                    if np.array_equal(dotC, dotX):
+                        repeated = True
+                        continue
+                if not repeated:
+                    centroids.append(dotX)
+                if len(centroids) == self.K:
+                    break
+            self.centroids = np.array(centroids[:self.K])
+
+        elif self.options['km_init'].lower() == 'random': #K random dots
             self.centroids = np.random.rand(self.K, self.X.shape[1])
-            self.old_centroids = np.random.rand(self.K, self.X.shape[1])
-        else:
-            self.centroids = np.random.rand(self.K, self.X.shape[1])
-            self.old_centroids =np.random.rand(self.K, self.X.shape[1])
+
+        elif self.options['km_init'].lower() == 'custom': #TBImplemented
+            pass
+        
+        self.old_centroids = self.centroids
 
 
     def get_labels(self):
