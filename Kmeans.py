@@ -1,4 +1,4 @@
-__authors__ = ['1489845','YYYYYYYY']
+__authors__ = ['1489845','1529079','1600715']
 __group__ = 'GrupZZ'
 
 import numpy as np
@@ -83,7 +83,7 @@ class KMeans:
             return
         
         if self.options['km_init'].lower() == 'first': #The first K dots
-            #OLD version
+        #OLD version
             # centroids = [] #Using this list both like iterator and store the centroids to treat them
             # for dotX in self.X:
             #     repeated = False
@@ -95,7 +95,7 @@ class KMeans:
             #         centroids.append(dotX)
             #     if len(centroids) == self.K:
             #         break
-            # self.centroids = np.array(centroids[:self.K])
+            # self.centroids = np.array(centroids[:self.K])zz
             
             #SOURCE: https://stackoverflow.com/questions/54140523/retain-order-when-taking-unique-rows-in-a-numpy-array
             row_indexes = np.unique(self.X, return_index=True, axis=0)[1]
@@ -108,6 +108,15 @@ class KMeans:
                 centroids.append(self.X[sorted_index[indexIT]])
 
             self.centroids = np.array(centroids)
+            
+        elif self.options['km_init'].lower() == 'random': #K random dots
+            self.centroids = np.random.rand(self.K, self.X.shape[1])
+
+        elif self.options['km_init'].lower() == 'custom': #TBImplemented
+            pass
+        
+        self.old_centroids = self.centroids
+        #print("matrix X",np.unique(self.X, axis=0))
 
 
     def get_labels(self):
@@ -134,11 +143,8 @@ class KMeans:
         """
         Checks if there is a difference between current and old centroids
         """
-        #######################################################
-        ##  YOU MUST REMOVE THE REST OF THE CODE OF THIS FUNCTION
-        ##  AND CHANGE FOR YOUR OWN CODE
-        #######################################################
-        return True
+        #SOURCE: https://www.codingem.com/numpy-compare-arrays/
+        return (self.centroids == self.old_centroids).all()
 
     def fit(self):
         """
