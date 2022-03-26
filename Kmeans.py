@@ -164,6 +164,9 @@ def distance(X, C):
         dist: PxK numpy array position ij is the distance between the
         i-th point of the first set an the j-th point of the second set
     """
+    print(X)
+    print("_____________")
+    print(C)
 
     #########################################################
     ##  YOU MUST REMOVE THE REST OF THE CODE OF THIS FUNCTION
