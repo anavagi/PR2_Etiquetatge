@@ -155,7 +155,19 @@ class KMeans:
         ##  YOU MUST REMOVE THE REST OF THE CODE OF THIS FUNCTION
         ##  AND CHANGE FOR YOUR OWN CODE
         #######################################################
-        pass
+
+        # 1. Per a cada punt de la imatge, troba quin és el centroide més proper.
+        self._init_centroids()
+        i = -1
+        while True:
+            # 3. Augmenta en 1 el número d’iteracions
+            i = i + 1
+            # 2. Calcula nous centroides utilitzant la funció get_centroids
+            self.get_centroids()
+            # 4. Comprova si convergeix, en cas de no fer-ho torna al primer pas"""
+            if (self.converges() == True):
+                break
+        return i
 
     def whitinClassDistance(self):
         """
