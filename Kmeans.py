@@ -118,16 +118,13 @@ class KMeans:
         self.old_centroids = self.centroids
         #print("matrix X",np.unique(self.X, axis=0))
 
-
+#YOOOOOOOOOOO
     def get_labels(self):
         """Calculates the closest centroid of all points in X
         and assigns each point to the closest centroid
         """
-        #######################################################
-        ##  YOU MUST REMOVE THE REST OF THE CODE OF THIS FUNCTION
-        ##  AND CHANGE FOR YOUR OWN CODE
-        #######################################################
-        self.labels = np.random.randint(self.K, size=self.X.shape[0])
+        print(self.X)
+
 
     def get_centroids(self):
         """
@@ -178,7 +175,7 @@ class KMeans:
         #######################################################
         pass
 
-
+#YOOOOOOOOOOO
 def distance(X, C):
     """
     Calculates the distance between each pixcel and each centroid
@@ -190,15 +187,25 @@ def distance(X, C):
         dist: PxK numpy array position ij is the distance between the
         i-th point of the first set an the j-th point of the second set
     """
-    print(X)
-    print("_____________")
-    print(C)
+    #dist sera una matriu amb els valors PK
+    # P_xshape = X.shape[0] #P,D
+    # K_cshape = C.shape[0] #K,D
+    # matriu_distancia = np.zeros((P_xshape,K_cshape))
+    # for i in len(K_cshape):
+    #     matriu_distancia=((X-C[index])**2).sum(axis=1)  
 
-    #########################################################
-    ##  YOU MUST REMOVE THE REST OF THE CODE OF THIS FUNCTION
-    ##  AND CHANGE FOR YOUR OWN CODE
-    #########################################################
-    return np.random.rand(X.shape[0], C.shape[0])
+    K = C.shape[0] # k es numero de files o numero de pixels, es el mateix 
+    distanciaCalculada = np.zeros((X.shape[0],K))
+    acumulador=np.zeros(())
+    for index in range(K): # recorrem tots els centroids, farem el calcul de la distancia euclidiana 
+        # print((X-C[index])**2)  
+        acumulador=((X-C[index])**2).sum(axis=1)  
+        # print(acumulador)
+        distanciaCalculada[:,[index]]= np.sqrt(np.reshape(acumulador,(acumulador.shape[0],1)))
+        # print(distanciaCalculada.shape)
+        # print(distanciaCalculada) 
+    return distanciaCalculada
+
 
 
 def get_colors(centroids):
