@@ -123,7 +123,11 @@ class KMeans:
         """Calculates the closest centroid of all points in X
         and assigns each point to the closest centroid
         """
-        print(self.X)
+        # print(self.X)
+        # FALTA RETOCAR NO MIOOOO
+        a = distance(self.X, self.centroids)
+        labels = a.argmin(axis=1)
+        self.labels = labels
 
 
     def get_centroids(self):
@@ -193,6 +197,8 @@ def distance(X, C):
     # matriu_distancia = np.zeros((P_xshape,K_cshape))
     # for i in len(K_cshape):
     #     matriu_distancia=((X-C[index])**2).sum(axis=1)  
+
+# FALTA RETOCAR
 
     K = C.shape[0] # k es numero de files o numero de pixels, es el mateix 
     distanciaCalculada = np.zeros((X.shape[0],K))
