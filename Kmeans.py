@@ -23,10 +23,6 @@ class KMeans:
     #############################################################
 
 
-
-
-
-
     def _init_X(self, X):
         """Initialization of all pixels, sets X as an array of data in vector form (PxD)
             Args:
@@ -34,14 +30,14 @@ class KMeans:
                     if matrix has more than 2 dimensions, the dimensionality of the smaple space is the length of
                     the last dimension
         """
+        F = X.shape[0] #First value of the matrix shape (lists)
+        C = X.shape[1] #Second value of the shape list (columns)
+
         #Operation to calculate N = F·C
-        x_shape = X.shape #shape of the matrix
-        F = x_shape[0] #first value of the shape list (lists)
-        C = x_shape[1] #second value of the shape list (columns)
         N = F * C #Calculate N
         
-        self.X = np.reshape(X, (N, 3)) #Reshape matrix 
-
+        X = np.array(X,dtype=np.float64) #Creating a new matrix full of floatsx64 (not equal if float63 is lower or bigger)
+        self.X = np.reshape(X, (N, X.shape[2])) #Reshape matrix
 
 
     def _init_options(self, options=None):
@@ -69,9 +65,6 @@ class KMeans:
         #############################################################
         ##  THIS FUNCTION CAN BE MODIFIED FROM THIS POINT, if needed
         #############################################################
-
-
-
 
     def _init_centroids(self):
         """
@@ -118,16 +111,16 @@ class KMeans:
         self.old_centroids = self.centroids
         #print("matrix X",np.unique(self.X, axis=0))
 
-#YOOOOOOOOOOO
+
     def get_labels(self):
         """Calculates the closest centroid of all points in X
         and assigns each point to the closest centroid
         """
-        # print(self.X)
-        # FALTA RETOCAR NO MIOOOO
-        a = distance(self.X, self.centroids)
-        labels = a.argmin(axis=1)
-        self.labels = labels
+        #Calculate de distance between points of X and the centroid 
+        matrix_distance = distance(self.X, self.centroids)
+
+        #Takes the closest centroid (argmin by columns) and asign it to the variable labels
+        self.labels = matrix_distance.argmin(axis=1) 
 
 
     def get_centroids(self):
@@ -192,27 +185,25 @@ def distance(X, C):
         i-th point of the first set an the j-th point of the second set
     """
     #dist sera una matriu amb els valors PK
-    # P_xshape = X.shape[0] #P,D
-    # K_cshape = C.shape[0] #K,D
-    # matriu_distancia = np.zeros((P_xshape,K_cshape))
-    # for i in len(K_cshape):
-    #     matriu_distancia=((X-C[index])**2).sum(axis=1)  
+    P_xshape = X.shape[0] #P,D
+    K_cshape = C.shape[0] #K,D
+    matriu_distance = np.zeros((P_xshape,K_cshape))
 
-# FALTA RETOCAR
+    #We use an auxiliar array to add the values of the distances
+    aux_matrix=np.zeros(()) 
 
-    K = C.shape[0] # k es numero de files o numero de pixels, es el mateix 
-    distanciaCalculada = np.zeros((X.shape[0],K))
-    acumulador=np.zeros(())
-    for index in range(K): # recorrem tots els centroids, farem el calcul de la distancia euclidiana 
-        # print((X-C[index])**2)  
-        acumulador=((X-C[index])**2).sum(axis=1)  
-        # print(acumulador)
-        distanciaCalculada[:,[index]]= np.sqrt(np.reshape(acumulador,(acumulador.shape[0],1)))
-        # print(distanciaCalculada.shape)
-        # print(distanciaCalculada) 
-    return distanciaCalculada
+    for i in range(K_cshape): #Uses range because object don't have type int if we use len()
+        distance=(X-C[i])**2 #Calculates distance
+        aux_matrix=(distance).sum(axis=1) #Sum by columns, add to aux_matrix
 
+        F_dim = aux_matrix.shape[0] #Take the first value of the dimension
 
+        m_aux_reshape = np.reshape(aux_matrix,(F_dim,1)) #Reshape matrix according to F_dim
+
+        #Assign into i value the square-root of the aux matrix
+        matriu_distance[:,[i]]=np.sqrt(m_aux_reshape) 
+
+    return matriu_distance
 
 def get_colors(centroids):
     """
