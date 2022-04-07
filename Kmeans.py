@@ -185,11 +185,29 @@ class KMeans:
         """
          sets the best k anlysing the results up to 'max_K' clusters
         """
-        #######################################################
-        ##  YOU MUST REMOVE THE REST OF THE CODE OF THIS FUNCTION
-        ##  AND CHANGE FOR YOUR OWN CODE
-        #######################################################
-        pass
+        whitin_class_distance = 0 #Initialize variable
+
+        #Loop in range from 2 (defined value) to max_K
+        for i in range(2,max_K):
+
+            self.K = i #Assig to the number of clusters i value
+            self.fit() #Call fit() function
+            
+            old_whitin_class_distance = whitin_class_distance #Save the old value
+            whitin_class_distance = self.whitinClassDistance() #Keep whitinClassDistance() return value
+
+            #Loop for i bigger than the defined value
+            if i > 2: 
+                #Dec function 100 * (WDCk / WDCk-1)
+                per_DECk = 100 * (whitin_class_distance / old_whitin_class_distance)
+                result_DECk = (100 - per_DECk)
+
+                threshold = 20 #Example 20%
+                #If result if smaller than 20 asign the previous K value (i-1)
+                if not result_DECk > threshold: 
+                    self.K = i - 1
+                    break 
+                #if result_DECk is bigger K = max_K
 
 #YOOOOOOOOOOO
 def distance(X, C):
