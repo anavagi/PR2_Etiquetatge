@@ -170,7 +170,14 @@ class KMeans:
         ##  YOU MUST REMOVE THE REST OF THE CODE OF THIS FUNCTION
         ##  AND CHANGE FOR YOUR OWN CODE
         #######################################################
-        return np.random.rand()
+        
+        for C in range(len(self.centroids)):
+          if self.labels==C:
+              distancia=distance(self.X,C)
+              distancia **=2 #exponent dist^2
+        N=self.X.shape[0]*self.X.shape[1]
+        distancia=(1/N)*distancia
+        return distancia
 
     def find_bestK(self, max_K):
         """
