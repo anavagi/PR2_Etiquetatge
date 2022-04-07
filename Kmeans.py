@@ -149,17 +149,19 @@ class KMeans:
         ##  YOU MUST REMOVE THE REST OF THE CODE OF THIS FUNCTION
         ##  AND CHANGE FOR YOUR OWN CODE
         #######################################################
-        self._init_centroids()  
-        i=-1
-        while True:
-            #3. Augmenta en 1 el número d’iteracions
-            i=i+1
-            #2. Calcula nous centroides utilitzant la funció get_centroids
-            self.get_centroids()
-            #4. Comprova si convergeix, en cas de no fer-ho torna al primer pas"""
-            if (self.converges()==True):
-               break
-        return i
+        self._init_centroids()
+        self.get_labels()
+        self.get_centroids()
+        #Comprova si convergeix 
+        while self.converges()==False:
+            if self.num_iter < self.options['max_iter']:
+                #Calcula nous centroides utilitzant la funció get_centroids
+                self.get_labels()
+                self.get_centroids()
+                #Augmenta en 1 el número d’iteracions
+                self.num_iter += 1
+            else:
+                break
 
     def whitinClassDistance(self):
         """
