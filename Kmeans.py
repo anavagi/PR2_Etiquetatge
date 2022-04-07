@@ -176,8 +176,8 @@ class KMeans:
               distancia=distance(self.X,C)
               distancia **=2 #exponent dist^2
         N=self.X.shape[0]*self.X.shape[1]
-        distancia=(1/N)*distancia
-        return distancia
+        WCD=(1/N)*distancia
+        return WDC
 
     def find_bestK(self, max_K):
         """
