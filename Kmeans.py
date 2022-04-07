@@ -1,5 +1,5 @@
 __authors__ = ['1489845','1529079','1600715']
-__group__ = 'GrupZZ'
+__group__ = ['DL17, DJ08 (només 1600715)']
 
 import numpy as np
 import utils
@@ -173,13 +173,14 @@ class KMeans:
         ##  AND CHANGE FOR YOUR OWN CODE
         #######################################################
         
-        for C in range(len(self.centroids)):
-          if self.labels==C:
-              distancia=distance(self.X,C)
-              distancia **=2 #exponent dist^2
-        N=self.X.shape[0]*self.X.shape[1]
-        WCD=(1/N)*distancia
-        return WDC
+        WCD = 0
+
+        for C in range(self.centroids.shape[0]):
+            if get_colors(self.centroids)[C]:
+                WCD += (np.linalg.norm(self.X[(self.labels == C)
+                                              ] - self.centroids[C])) ** 2
+
+        return (WCD/self.X.shape[0])
 
     def find_bestK(self, max_K):
         """
