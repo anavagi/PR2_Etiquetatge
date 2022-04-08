@@ -131,16 +131,20 @@ class KMeans:
         Runs K-Means algorithm until it converges or until the number
         of iterations is smaller than the maximum number of iterations.
         """
+        #Inicialitze self funcions
         self._init_centroids()
         self.get_labels()
         self.get_centroids()
-        #Comprova si convergeix
+        
+        #Loop verificates if converges
         while self.converges() == False:
+            #Verificate if the number of iterations are smaller than the maximum number.
             if self.num_iter < self.options['max_iter']:
-                #Calcula nous centroides utilitzant la funció get_centroids
+                #Set labels and calculates new centroids 
                 self.get_labels()
                 self.get_centroids()
-                #Augmenta en 1 el número d’iteracions
+                
+                #Increase the number of iterations
                 self.num_iter += 1
             else:
                 break
