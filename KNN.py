@@ -24,8 +24,8 @@ class KNN:
         :param train_data: PxMxNx3 matrix corresponding to P color images
         :return: assigns the train set to the matrix self.train_data shaped as PxD (P points in a D dimensional space)
         """
-        train_data = np.asarray(train_data, dtype=np.float64)
-        self.train_data = np.reshape(train_data, (train_data.shape[0],4800*3))
+        # train_data = np.asarray(train_data, dtype=np.float64)
+        # self.train_data = np.reshape(train_data, (train_data.shape[0],4800*3))
 
 
     def get_k_neighbours(self, test_data, k):
