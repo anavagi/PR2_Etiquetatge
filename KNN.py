@@ -37,11 +37,22 @@ class KNN:
         :return: the matrix self.neighbors is created (NxK)
                  the ij-th entry is the j-th nearest train point to the i-th test point
         """
-        #######################################################
-        ##  YOU MUST REMOVE THE REST OF THE CODE OF THIS FUNCTION
-        ##  AND CHANGE FOR YOUR OWN CODE
-        #######################################################
-        self.neighbors = np.random.randint(k, size=[test_data.shape[0],k])
+        # 1.Change dimensions (10, 60, 80, 3)
+        N = test_data.shape[0]
+        K = test_data.shape[1]*test_data.shape[2]*test_data.shape[3]
+
+        test_data = np.array(test_data, dtype=np.float64)
+        test_data = np.reshape(test_data, (N, K))  # Reshape matrix
+
+        #  2.Calculate distance between test_data and train_data
+        distances = cdist(test_data, self.train_data, 'euclidean')
+        # Save it in self.neighbors
+        # print(distances)
+
+        for i in distances:
+            idx = np.argsort(i)[:k]
+            print(idx)
+
 
 
     def get_class(self):
