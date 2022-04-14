@@ -1,6 +1,8 @@
-__authors__ = 'TO_BE_FILLED'
-__group__ = 'TO_BE_FILLED'
+__authors__ = ['1489845', '1529079', '1600715']
+# Nota: 1489845 i 1529079 pertanyen al grup DL17 i 1600715 pertany al grup DJ08
+__group__ = ['DL17', 'DJ08']
 
+from cgi import test
 import numpy as np
 import math
 import operator
@@ -22,11 +24,8 @@ class KNN:
         :param train_data: PxMxNx3 matrix corresponding to P color images
         :return: assigns the train set to the matrix self.train_data shaped as PxD (P points in a D dimensional space)
         """
-        #######################################################
-        ##  YOU MUST REMOVE THE REST OF THE CODE OF THIS FUNCTION
-        ##  AND CHANGE FOR YOUR OWN CODE
-        #######################################################
-        self.train_data = np.random.randint(8,size=[10,14400])
+        # train_data = np.asarray(train_data, dtype=np.float64)
+        # self.train_data = np.reshape(train_data, (train_data.shape[0],4800*3))
 
 
     def get_k_neighbours(self, test_data, k):
@@ -37,11 +36,28 @@ class KNN:
         :return: the matrix self.neighbors is created (NxK)
                  the ij-th entry is the j-th nearest train point to the i-th test point
         """
-        #######################################################
-        ##  YOU MUST REMOVE THE REST OF THE CODE OF THIS FUNCTION
-        ##  AND CHANGE FOR YOUR OWN CODE
-        #######################################################
-        self.neighbors = np.random.randint(k, size=[test_data.shape[0],k])
+        # 1. Change dimensions (10, 60, 80, 3) Matrix(NxK)
+        # print(test_data.shape)
+        N = test_data.shape[0]
+        K = test_data.shape[1] * test_data.shape[2] * test_data.shape[3]
+
+        test_data = np.array(test_data, dtype=np.float64) #Create array, type floats
+        test_data = np.reshape(test_data, (N, K))  # Reshape matrix
+
+        # 2. Calculate distance
+        distances = cdist(test_data, self.train_data, 'euclidean')
+
+        # 3. Save self.neighbors
+        values = [] #auxiliar array that will become into a np.array
+        for distance in distances:
+            # print("k value",k)
+            ordered_val = distance.argsort()[:k] #Values [first value: value k]
+            # print(ordered_val)
+            values.append(self.labels[ordered_val]) #Append values into array
+        
+        self.neighbors = np.array(values) #Turn list into array
+
+
 
     def get_class(self):
         """
