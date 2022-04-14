@@ -1,5 +1,6 @@
 __authors__ = ['1489845', '1529079', '1600715']
-__group__ = 'GrupZZ'
+# Nota: 1489845 i 1529079 pertanyen al grup DL17 i 1600715 pertany al grup DJ08
+__group__ = ['DL17', 'DJ08']
 
 import numpy as np
 import utils
@@ -76,20 +77,6 @@ class KMeans:
             return
 
         if self.options['km_init'].lower() == 'first':  # The first K dots
-            #OLD version
-            # centroids = [] #Using this list both like iterator and store the centroids to treat them
-            # for dotX in self.X:
-            #     repeated = False
-            #     for dotC in centroids: #Checking if stored centroids are repeated
-            #         if np.array_equal(dotC, dotX):
-            #             repeated = True
-            #             continue
-            #     if not repeated:
-            #         centroids.append(dotX)
-            #     if len(centroids) == self.K:
-            #         break
-            # self.centroids = np.array(centroids[:self.K])zz
-
             #SOURCE: https://stackoverflow.com/questions/54140523/retain-order-when-taking-unique-rows-in-a-numpy-array
             row_indexes = np.unique(self.X, return_index=True, axis=0)[1]
 
@@ -111,7 +98,7 @@ class KMeans:
         self.old_centroids = self.centroids
 
     def get_labels(self):
-        """Calculates the closest centroid of all points in X
+        """        Calculates the closest centroid of all points in X
         and assigns each point to the closest centroid
         """
         #Calculate de distance between points of X and the centroid
@@ -124,15 +111,12 @@ class KMeans:
         """
         Calculates coordinates of centroids based on the coordinates of all the points assigned to the centroid
         """
-        #######################################################
-        ################UTILIZAR CÓDIGO PROPIO#################
-        #######################################################
+        # Make sure we save the current centroids
         self.old_centroids = np.copy(self.centroids)
-        for i in range(self.centroids.shape[0]):
-            points = self.labels == i
-            if points.any():
-                self.centroids[i] = self.X[points].reshape(
-                    -1, self.X.shape[1]).mean(axis=0)
+
+        for cIt in range(self.centroids.shape[0]):
+            # And then we calculate the mean of the labels than belongs to the current centroid
+            self.centroids[cIt] = self.X[(self.labels == cIt)].mean(axis=0)
 
     def converges(self):
         """
@@ -146,74 +130,63 @@ class KMeans:
         Runs K-Means algorithm until it converges or until the number
         of iterations is smaller than the maximum number of iterations.
         """
-        #######################################################
-        ##  YOU MUST REMOVE THE REST OF THE CODE OF THIS FUNCTION
-        ##  AND CHANGE FOR YOUR OWN CODE
-        #######################################################
+        #Inicialitze self funcions
         self._init_centroids()
         self.get_labels()
         self.get_centroids()
-
-        # # self.num_iter = 0
-        # while not self.converges():
-
-        #     #4. Comprova si convergeix, en cas de no fer-ho torna al primer pas"""
-        #     if (self.num_iter < self.options['max_iter']):
-        #        break
-        #     self.get_lables()
-        #     self.get_centroids()
-
-        #     self.num_iter += 
         
-        while self.num_iter < self.options['max_iter'] and not self.converges():
-            self.get_labels()
-            self.get_centroids()
-            self.num_iter += 1
+        #Loop verificates if converges
+        while self.converges() == False:
+            #Verificate if the number of iterations are smaller than the maximum number.
+            if self.num_iter < self.options['max_iter']:
+                #Set labels and calculates new centroids 
+                self.get_labels()
+                self.get_centroids()
+                
+                #Increase the number of iterations
+                self.num_iter += 1
+            else:
+                break
 
     def whitinClassDistance(self):
         """
          returns the whithin class distance of the current clustering
         """
-        WCD = 0 
+        WCD = 0
 
-        for centroid in range(self.centroids.shape[0]):
-            cluster = self.labels == centroid
-            if cluster.any():
-                x = self.X[cluster]
-                Cx = self.centroids[centroid]
-                WCD += (np.linalg.norm(x - Cx)) ** 2
-        
-        
-        WCD /= self.X.shape[0]
-        
-        return WCD
+        for cIt in range(self.centroids.shape[0]):
+            WCD += (np.linalg.norm(self.X[(self.labels == cIt)] - self.centroids[cIt])) ** 2
+
+        return (WCD/self.X.shape[0])
 
     def find_bestK(self, max_K):
         """
          sets the best k anlysing the results up to 'max_K' clusters
         """
-        whitin_class_distance = 0 #Initialize variable
+        whitin_class_distance = 0  # Initialize variable
 
         #Loop in range from 2 (defined value) to max_K
-        for i in range(2,max_K):
+        for i in range(2, max_K):
 
-            self.K = i #Assig to the number of clusters i value
-            self.fit() #Call fit() function
-            
-            old_whitin_class_distance = whitin_class_distance #Save the old value
-            whitin_class_distance = self.whitinClassDistance() #Keep whitinClassDistance() return value
+            self.K = i  # Assig to the number of clusters i value
+            self.fit()  # Call fit() function
+
+            old_whitin_class_distance = whitin_class_distance  # Save the old value
+            # Keep whitinClassDistance() return value
+            whitin_class_distance = self.whitinClassDistance()
 
             #Loop for i bigger than the defined value
-            if i > 2: 
+            if i > 2:
                 #Dec function 100 * (WDCk / WDCk-1)
-                per_DECk = 100 * (whitin_class_distance / old_whitin_class_distance)
+                per_DECk = 100 * (whitin_class_distance /
+                                  old_whitin_class_distance)
                 result_DECk = (100 - per_DECk)
 
-                threshold = 20 #Example 20%
+                threshold = 20  # Example 20%
                 #If result if smaller than 20 asign the previous K value (i-1)
-                if not result_DECk > threshold: 
+                if not result_DECk > threshold:
                     self.K = i - 1
-                    break 
+                    break
                 #if result_DECk is bigger K = max_K
 
 
@@ -228,6 +201,7 @@ def distance(X, C):
         dist: PxK numpy array position ij is the distance between the
         i-th point of the first set an the j-th point of the second set
     """
+
     #dist sera una matriu amb els valors PK
     P_xshape = X.shape[0]  # P,D
     K_cshape = C.shape[0]  # K,D

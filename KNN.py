@@ -43,7 +43,6 @@ class KNN:
         #######################################################
         self.neighbors = np.random.randint(k, size=[test_data.shape[0],k])
 
-
     def get_class(self):
         """
         Get the class by maximum voting
