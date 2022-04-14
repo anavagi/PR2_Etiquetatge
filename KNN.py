@@ -24,8 +24,8 @@ class KNN:
         :param train_data: PxMxNx3 matrix corresponding to P color images
         :return: assigns the train set to the matrix self.train_data shaped as PxD (P points in a D dimensional space)
         """
-        # train_data = np.asarray(train_data, dtype=np.float64)
-        # self.train_data = np.reshape(train_data, (train_data.shape[0],4800*3))
+        train_data = np.asarray(train_data, dtype=np.float64)
+        self.train_data = np.reshape(train_data, (train_data.shape[0],4800*3))
 
 
     def get_k_neighbours(self, test_data, k):
@@ -39,7 +39,7 @@ class KNN:
         # 1. Change dimensions (10, 60, 80, 3) Matrix(NxK)
         # print(test_data.shape)
         N = test_data.shape[0]
-        K = test_data.shape[1] * test_data.shape[2] * test_data.shape[3]
+        K = test_data.shape[1] * test_data.shape[2] * test_data.shape[3] #Calculate K value
 
         test_data = np.array(test_data, dtype=np.float64) #Create array, type floats
         test_data = np.reshape(test_data, (N, K))  # Reshape matrix
@@ -48,14 +48,14 @@ class KNN:
         distances = cdist(test_data, self.train_data, 'euclidean')
 
         # 3. Save self.neighbors
-        values = [] #auxiliar array that will become into a np.array
+        values = np.array() #auxiliar array that will become into a np.array
         for distance in distances:
             # print("k value",k)
             ordered_val = distance.argsort()[:k] #Values [first value: value k]
             # print(ordered_val)
             values.append(self.labels[ordered_val]) #Append values into array
         
-        self.neighbors = np.array(values) #Turn list into array
+        np.concatenate((self.neighbors, values), axis=0) #Turn list into array
 
 
 
