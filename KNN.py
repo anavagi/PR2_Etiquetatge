@@ -8,6 +8,7 @@ import math
 import operator
 from scipy.spatial.distance import cdist
 
+
 class KNN:
     def __init__(self, train_data, labels):
 
@@ -17,16 +18,16 @@ class KNN:
         ##  THIS FUNCTION CAN BE MODIFIED FROM THIS POINT, if needed
         #############################################################
 
-
-    def _init_train(self,train_data):
+    def _init_train(self, train_data):
         """
         initializes the train data
         :param train_data: PxMxNx3 matrix corresponding to P color images
         :return: assigns the train set to the matrix self.train_data shaped as PxD (P points in a D dimensional space)
         """
-        # train_data = np.asarray(train_data, dtype=np.float64)
-        # self.train_data = np.reshape(train_data, (train_data.shape[0],4800*3))
 
+        # numpy arrays are float by default. 14400 'cause --> 60x80x3 (RGB)
+        #SRC: https://numpy.org/doc/stable/reference/generated/numpy.var.html#:~:text=For%20arrays%20of%20integer%20type,same%20as%20the%20array%20type.
+        self.train_data = np.reshape(np.array(train_data), ((len(train_data)), 14400))
 
     def get_k_neighbours(self, test_data, k):
         """
@@ -41,23 +42,23 @@ class KNN:
         N = test_data.shape[0]
         K = test_data.shape[1] * test_data.shape[2] * test_data.shape[3]
 
-        test_data = np.array(test_data, dtype=np.float64) #Create array, type floats
+        # Create array, type floats
+        test_data = np.array(test_data, dtype=np.float64)
         test_data = np.reshape(test_data, (N, K))  # Reshape matrix
 
         # 2. Calculate distance
         distances = cdist(test_data, self.train_data, 'euclidean')
 
         # 3. Save self.neighbors
-        values = [] #auxiliar array that will become into a np.array
+        values = []  # auxiliar array that will become into a np.array
         for distance in distances:
             # print("k value",k)
-            ordered_val = distance.argsort()[:k] #Values [first value: value k]
+            # Values [first value: value k]
+            ordered_val = distance.argsort()[:k]
             # print(ordered_val)
-            values.append(self.labels[ordered_val]) #Append values into array
-        
-        self.neighbors = np.array(values) #Turn list into array
+            values.append(self.labels[ordered_val])  # Append values into array
 
-
+        self.neighbors = np.array(values)  # Turn list into array
 
     def get_class(self):
         """
@@ -67,29 +68,11 @@ class KNN:
                             (i.e. the class at which that row belongs)
                 2nd array For each of the rows in self.neighbors gets the % of votes for the winning class
         """
-        #######################################################
-        ##  YOU MUST REMOVE THE REST OF THE CODE OF THIS FUNCTION
-        ##  AND CHANGE FOR YOUR OWN CODE
-        #######################################################
-           #print(self.neighbors)
-        #print (self.neighbors.shape[1]) # nº columnas
-       # print (self.neighbors.shape[0]) # nº filas
-        #valores,conteos=np.unique(self.neighbors[:], return_counts=True)
-        
-       # print(valores)
-      #  print (conteos)
-       # valores[np.argmax(conteos)]
-        #print(valores[np.argmax(conteos)])
-        #return valores[np.argmax(conteos)]
-        
-        arrayValoresMAx=np.array([])
-        for i in self.neighbors:  
-            valores,conteos=np.unique(i, return_counts=True)
-            valormax=valores[np.argmax(conteos)]
-            #print (valormax)
-            arrayValoresMAx=np.append(arrayValoresMAx,valormax)
-        return arrayValoresMAx
-
+        maxNeighbors = np.array([])
+        for i in self.neighbors:  # For each neightbor we search for the one with highest value
+            value, count = np.unique(i, return_counts=True)  # /!\ 
+            maxNeighbors = np.append(maxNeighbors, value[np.argmax(count)])   # Store the highest value
+        return maxNeighbors
 
     def predict(self, test_data, k):
         """
@@ -99,5 +82,5 @@ class KNN:
         :return: the output form get_class (2 Nx1 vector, 1st the classm 2nd the  % of votes it got
         """
 
-
-        return np.random.randint(10, size=self.neighbors.size), np.random.random(self.neighbors.size)
+        self.get_k_neighbours(test_data, k)
+        return self.get_class()
