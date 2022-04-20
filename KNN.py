@@ -50,6 +50,7 @@ class KNN:
         distances = cdist(test_data, self.train_data, 'euclidean')
 
         # 3. Save self.neighbors
+        values = []  # auxiliar array that will become into a np.array
         for distance in distances:
             # print("k value",k)
             # Values [first value: value k]
