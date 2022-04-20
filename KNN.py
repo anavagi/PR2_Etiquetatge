@@ -71,7 +71,24 @@ class KNN:
         ##  YOU MUST REMOVE THE REST OF THE CODE OF THIS FUNCTION
         ##  AND CHANGE FOR YOUR OWN CODE
         #######################################################
-        return np.random.randint(10, size=self.neighbors.size), np.random.random(self.neighbors.size)
+           #print(self.neighbors)
+        #print (self.neighbors.shape[1]) # nº columnas
+       # print (self.neighbors.shape[0]) # nº filas
+        #valores,conteos=np.unique(self.neighbors[:], return_counts=True)
+        
+       # print(valores)
+      #  print (conteos)
+       # valores[np.argmax(conteos)]
+        #print(valores[np.argmax(conteos)])
+        #return valores[np.argmax(conteos)]
+        
+        arrayValoresMAx=np.array([])
+        for i in self.neighbors:  
+            valores,conteos=np.unique(i, return_counts=True)
+            valormax=valores[np.argmax(conteos)]
+            #print (valormax)
+            arrayValoresMAx=np.append(arrayValoresMAx,valormax)
+        return arrayValoresMAx
 
 
     def predict(self, test_data, k):
