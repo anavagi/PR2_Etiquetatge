@@ -40,7 +40,7 @@ class KNN:
         # 1. Change dimensions (10, 60, 80, 3) Matrix(NxK)
         # print(test_data.shape)
         N = test_data.shape[0]
-        K = test_data.shape[1] * test_data.shape[2] * test_data.shape[3] #Calculate K value
+        K = test_data.shape[1] * test_data.shape[2] * test_data.shape[3]
 
         # Create array, type floats
         test_data = np.array(test_data, dtype=np.float64)
@@ -56,6 +56,7 @@ class KNN:
             # Values [first value: value k]
             ordered_val = distance.argsort()[:k]
             # print(ordered_val)
+            values.append(self.labels[ordered_val])  # Append values into array
 
         self.neighbors = np.array(values)  # Turn list into array
 
@@ -67,10 +68,12 @@ class KNN:
                             (i.e. the class at which that row belongs)
                 2nd array For each of the rows in self.neighbors gets the % of votes for the winning class
         """
-        maxNeighbors = np.array([])
-        for i in self.neighbors:  # For each neightbor we search for the one with highest value
-            value, count = np.unique(i, return_counts=True)  # /!\ 
-            maxNeighbors = np.append(maxNeighbors, value[np.argmax(count)])   # Store the highest value
+        maxNeighbors = np.array([]) #Create and empty array
+
+        for neighbor in self.neighbors:  # For each neightbor we search for the one with highest value
+            value, number_of_times  = np.unique(neighbor, return_counts=True)  # /!\ 
+            maxNeighbors = np.append(maxNeighbors, value[np.argmax(number_of_times)]) # Store the highest value
+
         return maxNeighbors
 
     def predict(self, test_data, k):
