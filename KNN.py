@@ -7,6 +7,7 @@ import numpy as np
 import math
 import operator
 from scipy.spatial.distance import cdist
+import pandas as pd
 
 
 class KNN:
@@ -68,16 +69,22 @@ class KNN:
                             (i.e. the class at which that row belongs)
                 2nd array For each of the rows in self.neighbors gets the % of votes for the winning class
         """
-        maxNeighbors = np.array([]) #Create and empty array
 
+        neighbors = [] #Create and empty array
         for neighbor in self.neighbors:  # For each neightbor we search for the one with highest value
 
             #param return_counts allows to count the number of times each unique item appears
-            value, number_of_times  = np.unique(neighbor, return_counts=True)  # /!\ 
-            #Store the highest value
-            maxNeighbors = np.append(maxNeighbors, value[np.argmax(number_of_times)])
+            element, number_of_times  = np.unique(neighbor, return_counts=True)  # /!\ 
 
+            #Store the highest value
+            max_value = np.argmax(number_of_times)
+            neighbors.append(element[max_value])
+
+        maxNeighbors = np.array(neighbors) #Array into numpy array
         return maxNeighbors
+
+
+
 
     def predict(self, test_data, k):
         """
