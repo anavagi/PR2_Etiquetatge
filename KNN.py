@@ -73,8 +73,9 @@ class KNN:
         neighbors = [] #Create and empty array
         for neighbor in self.neighbors:  # For each neightbor we search for the one with highest value
 
-            #param return_counts allows to count the number of times each unique item appears
+            #param return_counts, allows counting the number of times each unique item appears
             element, number_of_times  = np.unique(neighbor, return_counts=True)  # /!\ 
+            #SRC: https://numpy.org/doc/stable/reference/generated/numpy.unique.html
 
             #Store the highest value
             max_value = np.argmax(number_of_times)
