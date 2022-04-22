@@ -7,17 +7,12 @@ import numpy as np
 import math
 import operator
 from scipy.spatial.distance import cdist
-import pandas as pd
-
 
 class KNN:
     def __init__(self, train_data, labels):
 
         self._init_train(train_data)
         self.labels = np.array(labels)
-        #############################################################
-        ##  THIS FUNCTION CAN BE MODIFIED FROM THIS POINT, if needed
-        #############################################################
 
     def _init_train(self, train_data):
         """
@@ -26,7 +21,7 @@ class KNN:
         :return: assigns the train set to the matrix self.train_data shaped as PxD (P points in a D dimensional space)
         """
 
-        # numpy arrays are float by default. 14400 'cause --> 60x80x3 (RGB)
+        #Numpy arrays are float by default. 14400 'cause --> 60x80x3 (RGB)
         #SRC: https://numpy.org/doc/stable/reference/generated/numpy.var.html#:~:text=For%20arrays%20of%20integer%20type,same%20as%20the%20array%20type.
         self.train_data = np.reshape(np.array(train_data), ((len(train_data)), 14400))
 
@@ -39,13 +34,12 @@ class KNN:
                  the ij-th entry is the j-th nearest train point to the i-th test point
         """
         # 1. Change dimensions (10, 60, 80, 3) Matrix(NxK)
-        # print(test_data.shape)
         N = test_data.shape[0]
         K = test_data.shape[1] * test_data.shape[2] * test_data.shape[3]
 
         # Create array, type floats
         test_data = np.array(test_data, dtype=np.float64)
-        test_data = np.reshape(test_data, (N, K))  # Reshape matrix
+        test_data = np.reshape(test_data, (N, K))  # Reshape matrix with N,K
 
         # 2. Calculate distance
         distances = cdist(test_data, self.train_data, 'euclidean')
@@ -53,13 +47,13 @@ class KNN:
         # 3. Save self.neighbors
         values = []  # auxiliar array that will become into a np.array
         for distance in distances:
-            # print("k value",k)
-            # Values [first value: value k]
-            ordered_val = distance.argsort()[:k]
-            # print(ordered_val)
-            values.append(self.labels[ordered_val])  # Append values into array
 
-        self.neighbors = np.array(values)  # Turn list into array
+            #Values [first value: value k]
+            ordered_val = distance.argsort()[:k]
+
+            values.append(self.labels[ordered_val])#Append values into array
+
+        self.neighbors = np.array(values) #Turn list into array
 
     def get_class(self):
         """
@@ -71,10 +65,10 @@ class KNN:
         """
 
         neighbors = [] #Create and empty array
-        for neighbor in self.neighbors:  # For each neightbor we search for the one with highest value
+        for neighbor in self.neighbors: #For each neightbor we search for the one with highest value
 
-            #param return_counts, allows counting the number of times each unique item appears
-            element, number_of_times  = np.unique(neighbor, return_counts=True)  # /!\ 
+            #Param return_counts, allows counting the number of times each unique item appears
+            element, number_of_times  = np.unique(neighbor, return_counts=True)
             #SRC: https://numpy.org/doc/stable/reference/generated/numpy.unique.html
 
             #Store the highest value
@@ -83,9 +77,6 @@ class KNN:
 
         maxNeighbors = np.array(neighbors) #Array into numpy array
         return maxNeighbors
-
-
-
 
     def predict(self, test_data, k):
         """
