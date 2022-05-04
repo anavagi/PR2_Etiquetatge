@@ -6,7 +6,7 @@ import Kmeans
 import KNN
 from utils_data import read_dataset, visualize_k_means, visualize_retrieval
 import matplotlib.pyplot as plt
-import cv2
+#import cv2
 
 if __name__ == '__main__':
 
@@ -21,9 +21,11 @@ if __name__ == '__main__':
 
 ## You can start coding your functions here
 
-
-
-
-
-
-
+def Retrieval_by_color(test_imgs,color_labels,Color): 
+    found_IMGs = []
+    #https://www.geeksforgeeks.org/find-common-values-between-two-numpy-arrays/    
+    for it,img in enumerate(test_imgs):
+       if np.array_equal(np.sort(np.intersect1d(color_labels[it], Color)), np.sort(Color)):
+           found_IMGs.append(img)
+          
+    return np.array(found_IMGs)
