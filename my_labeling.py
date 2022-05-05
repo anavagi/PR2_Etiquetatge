@@ -46,28 +46,34 @@ def Retrival_combined():
 ##Anàlisi Quantitatiu#
 ######################
 
-
-# No pasamos la clase KMeans ya que la calculamos en función de la lista
+# No pasamos la clase KMeans ya que la calculamos dentro de la función con el nº de indice
 def Kmeans_statistics(nIMG, test_imgs, Kmax):
-    km = Kmeans.KMeans(test_imgs[nIMG], 2)
-    time_list = []
-    K_list = []
-    it_list = []
 
-    for k in range(Kmax-1):
-        if k == 0:
-            k = 2
-        K_list.append(km.K)
-        km.fit()
-        it_list.append(km.num_iter)
-        time_list.append(km.whitinClassDistance())
-        km.K += 1
+    KMean = Kmeans.KMeans(test_imgs[nIMG], 2) #2 por defecto ya que es el minimo
+
+    time_list, K_list, it_list = [],[],[]
+
+    for k in range(Kmax-1): #-1 ya que k=1 no se da
+        K_list.append(KMean.K)
+        KMean.fit()
+        it_list.append(KMean.num_iter)
+        time_list.append(KMean.whitinClassDistance())
+        KMean.K += 1
+
+    #SRC: https://matplotlib.org/stable/tutorials/introductory/pyplot.html
+   
+    #Gráfica WCD
+    plt.bar((K_list), (time_list))
+    plt.ylabel('WCD')
+    plt.show()
+    #Gráfica IT
+    plt.bar((K_list), (it_list))
+    plt.ylabel('Iteraciones')
+    plt.show()
 
     # print(time_list)
     # print(K_list)
     # print(it_list)
-
-    pass
 
 
 def Get_shape_accuracy():
