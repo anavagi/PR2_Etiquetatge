@@ -90,3 +90,13 @@ def Get_colors_accuracy():
 
 def Find_bestK():
     pass
+
+
+
+######################
+#########TEST#########
+######################
+
+
+#TEST Kmeans_statistics index=5, text_imgs, kmax=5
+Kmeans_statistics(5, test_imgs, 5)
