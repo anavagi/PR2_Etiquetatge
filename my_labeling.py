@@ -75,10 +75,12 @@ def Kmeans_statistics(nIMG, test_imgs, Kmax):
     # print(K_list)
     # print(it_list)
 
-
-def Get_shape_accuracy():
-    pass
-
+def Get_shape_accuracy(labels_knn,Ground_Truth):
+    eq=[]
+    eq=(labels_knn==Ground_Truth)
+    average=np.mean(eq)
+    percentage=average*100
+    return percentage
 
 def Get_colors_accuracy():
     pass
