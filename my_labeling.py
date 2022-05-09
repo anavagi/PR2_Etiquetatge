@@ -35,9 +35,8 @@ def Retrieval_by_color(test_imgs, color_labels, Color):
     return np.array(found_IMGs)
 
 
-def Retrival_by_shape(train_imgs, classes_labels, classe):
-    pass
-
+def Retrival_by_shape():
+    pass 
 
 def Retrival_combined():
     pass
@@ -94,11 +93,11 @@ def Get_colors_accuracy(nIMG, test_imgs, ground_truth):
     
     result_color = 0
     for index, colors in enumerate(list_with_colors):
+
         len_gt = len(ground_truth[index])
         len_lwc = len(list_with_colors)
         count_colors = 0
         colors = np.unique(colors)
-        
         
         for color, color_gt in zip(colors, ground_truth[index]):
             if color == color_gt:
@@ -121,4 +120,10 @@ def Find_bestK():
 
 #TEST get_color_accuracy index=5, text_imgs, train_color_labels
 #(nIMG, test_imgs, ground_truth)
-print(Get_colors_accuracy(5, test_imgs, train_color_labels[:150]))
+#print(Get_colors_accuracy(5, test_imgs, train_color_labels[:150]))
+
+#TEST retreival_by_shape index=5, text_imgs, train_color_labels
+
+#(test_imgs, train_class_labels, classe) 
+results = Retrival_by_shape(train_imgs, test_imgs, train_class_labels,['Shirts', 'Dresses'])
+visualize_retrieval(results, 10)
