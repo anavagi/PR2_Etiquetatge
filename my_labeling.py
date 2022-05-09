@@ -88,11 +88,38 @@ def Get_colors_accuracy(nIMG, test_imgs, ground_truth):
     #---KMEAN----
     #cambiar el nIMG no varia el resultado
     KMean = Kmeans.KMeans(test_imgs[nIMG], 2) #return one object
-    KMean.find_bestK(20) #3, 20 en el ejemplo. Si variamos el valor varia el resultado
+    KMean.find_bestK(3) #Si variamos el valor varia el resultado ¡ 
     list_with_colors.append(Kmeans.get_colors(KMean.centroids))
 
-    
-    
+    #FUNCTION FIND_BESTK
+    '''Solo tenemos que modifcar la funcion find_bestK del Kmeans.py para que admita un parametro 
+    que corresponda al llindar.
+    Funcion entera modificada:
+    def find_bestK(self, max_K, threshold):
+        whitin_class_distance = 0  # Initialize variable
+
+        for i in range(2, max_K):
+
+            self.K = i  # Assig to the number of clusters i value
+            self.fit()  # Call fit() function
+
+            old_whitin_class_distance = whitin_class_distance  # Save the old value
+            whitin_class_distance = self.whitinClassDistance()
+
+            if i > 2:
+                per_DECk = 100 * (whitin_class_distance /
+                                  old_whitin_class_distance)
+                result_DECk = (100 - per_DECk)
+
+                if not result_DECk > threshold:
+                    self.K = i - 1
+                    break
+
+
+    Llamada en esta funcion:
+    KMean.find_bestK(3,20) #primero valores igual que el anterior, segundo llindar
+
+    '''
     result_color = 0
     for index, colors in enumerate(list_with_colors):
 
