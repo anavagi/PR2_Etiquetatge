@@ -35,7 +35,7 @@ def Retrieval_by_color(test_imgs, color_labels, Color):
     return np.array(found_IMGs)
 
 
-def Retrival_by_shape():
+def Retrival_by_shape(train_imgs, classes_labels, classe):
     pass
 
 
@@ -80,12 +80,35 @@ def Get_shape_accuracy():
     pass
 
 
-def Get_colors_accuracy():
-    pass
+#ground_truth imported from utils.data.py
+def Get_colors_accuracy(nIMG, test_imgs, ground_truth):
+    list_with_colors = [] #List to save our colors
 
-######################
-########Millores######
-######################
+    #---KMEAN----
+    #cambiar el nIMG no varia el resultado
+    KMean = Kmeans.KMeans(test_imgs[nIMG], 2) #return one object
+    KMean.find_bestK(20) #3, 20 en el ejemplo. Si variamos el valor varia el resultado
+    list_with_colors.append(Kmeans.get_colors(KMean.centroids))
+
+    
+    
+    result_color = 0
+    for index, colors in enumerate(list_with_colors):
+        len_gt = len(ground_truth[index])
+        len_lwc = len(list_with_colors)
+        count_colors = 0
+        colors = np.unique(colors)
+        
+        
+        for color, color_gt in zip(colors, ground_truth[index]):
+            if color == color_gt:
+                count_colors +=1
+            
+        result_color += count_colors / len_gt
+
+    percent_labels = (result_color / len_lwc) * 100
+
+    return percent_labels
 
 
 def Find_bestK():
@@ -93,10 +116,9 @@ def Find_bestK():
 
 
 
-######################
-#########TEST#########
-######################
-
-
 #TEST Kmeans_statistics index=5, text_imgs, kmax=5
-Kmeans_statistics(5, test_imgs, 5)
+# Kmeans_statistics(5, test_imgs, 5)
+
+#TEST get_color_accuracy index=5, text_imgs, train_color_labels
+#(nIMG, test_imgs, ground_truth)
+print(Get_colors_accuracy(5, test_imgs, train_color_labels[:150]))
