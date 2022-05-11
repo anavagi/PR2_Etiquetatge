@@ -24,7 +24,7 @@ if __name__ == '__main__':
 ##Anàlisi Qualitatiu##
 ######################
 
-def Retrieval_by_color(test_imgs, test_labels, labels):
+def Retrieval_by_color(test_imgs, test_labels, labels):  # Erik
     found_IMGs = []
     #https://www.geeksforgeeks.org/find-common-values-between-two-numpy-arrays/
     for it, img in enumerate(test_imgs):
@@ -34,7 +34,7 @@ def Retrieval_by_color(test_imgs, test_labels, labels):
     return np.array(found_IMGs)
 
 
-def Retrieval_by_shape(train_imgs, train_labels, label): #Skarleth
+def Retrieval_by_shape(train_imgs, train_labels, label):  # Skarleth
     found_IMGs = []
 
     for it, img in enumerate(train_imgs):
@@ -48,11 +48,11 @@ def Retrieval_by_shape(train_imgs, train_labels, label): #Skarleth
 ######################
 
 
-def Kmeans_statistics(KMean, Kmax):
+def Kmeans_statistics(KMean, Kmax):  # Erik
 
     WCD_list, K_list, it_list = [], [], []
 
-    for i in range(Kmax-1):  # -1 ja que k=1 no es dona el cas
+    for i in range(Kmax-1):  # -1 ya que k=1 no se da
         K_list.append(KMean.K)
         KMean.fit()
         it_list.append(KMean.num_iter)
@@ -70,6 +70,10 @@ def Kmeans_statistics(KMean, Kmax):
     plt.ylabel('Iteraciones')
     plt.show()
 
+    # print(WCD_list)
+    # print(K_list)
+    # print(it_list)
+
 
 def Get_shape_accuracy(labels_knn, Ground_Truth):  # Skarleth
     eq = []
@@ -79,12 +83,13 @@ def Get_shape_accuracy(labels_knn, Ground_Truth):  # Skarleth
     return percentage
 
 
-def Get_colors_accuracy(nIMG, test_imgs, ground_truth):
+def Get_colors_accuracy(nIMG, test_imgs, ground_truth):  # Ana
     list_with_colors = []  # List to save our colors
 
     #---KMEAN----
+    #cambiar el nIMG no varia el resultado
     KMean = Kmeans.KMeans(test_imgs[nIMG], 2)  # return one object
-    KMean.find_bestK(3)  # Si variamos el valor varia el resultado
+    KMean.find_bestK(3)  # Si variamos el valor varia el resultado ¡
     list_with_colors.append(Kmeans.get_colors(KMean.centroids))
 
 
@@ -100,6 +105,22 @@ def Iniciar_KMeans(nConjunt, K=2):
     #K=2 por defecto ya que es el minimo
     return Kmeans.KMeans(test_imgs[nConjunt], K)
 
+
+def Iniciar_KmeansLabels(K=2):
+    #K=2 por defecto ya que es el minimo
+
+    labels = []
+
+    for test_img in test_imgs:
+        tmp = Kmeans.KMeans(test_img)
+        tmp.find_bestK(K)
+        labels.append(Kmeans.get_colors(tmp.centroids))
+
+    return labels
+
+def initKNN(nIMGs):
+    return KNN.KNN(train_imgs[:nIMGs], train_class_labels[:nIMGs])
+
 ######################
 #########TEST#########
 ######################
@@ -108,7 +129,7 @@ def Iniciar_KMeans(nConjunt, K=2):
 while(True):
 
     MSG = """Introdueix un nº en funció del test que vols fer:
-        1. Retrieval by Color [SIN ACABAR]
+        1. Retrieval by Color
         2. Retrieval by Shape
         3. Kmeans Statistics
         4. Get Shape Accuracy [SIN ACABAR]
@@ -132,21 +153,41 @@ while(True):
         continue
 
     elif seleccio == 1:
-        print("Iniciant Retrieval by Color [SIN ACABAR]")
-        
+        print("Iniciant Retrieval by Color")
+
         print("Introdueix un valor per a K")
         K = int(input())
+
+        print("Introdueix el nº de imatges que vols retornar")
+        nIMGs = int(input())
+
+        test_img_labels = Iniciar_KmeansLabels()
+        labels = [] #Colors que volem buscar
+    
+        while(True):
+            print("Introdueix un color que vols buscar dels següents: ")
+
+            for clase in np.unique(test_img_labels):
+                print(clase)
+            inputClase = input()
+
+            if inputClase in np.unique(test_img_labels):
+                labels.append(inputClase)
+                
+                print("Introduir un altre color (1=SI, altre nº = NO)?")
+                sino=int(input())
+                if sino==1:
+                    continue
+                else:
+                    break
         
-        Retrieval = Iniciar_KMeans(len(test_imgs),K)
-        
-        #busquem la llista de colors
-        
-        
-        
+        Retrieval = Retrieval_by_color(test_imgs, test_img_labels, labels)
+
+        visualize_retrieval(Retrieval, nIMGs)
         
         continue
 
-    elif seleccio == 2:
+    elif seleccio == 2: #CAMBIAR NOMBRE VAR CLASSES
         print("Iniciant Retrieval by Shape")
         RetrievalKNN = Iniciar_KNN()
 
@@ -171,11 +212,9 @@ while(True):
 
             print("Error, introdueix una altre vegada")
 
-        retrieval = Retrieval_by_shape(train_imgs, classes, inputClase)
+        Retrieval = Retrieval_by_shape(train_imgs, classes, inputClase)
 
-        visualize_retrieval(retrieval, nIMGs)
-
-        print("Retornades:", nIMGs, "imatges, tornem al menú principal. ")
+        visualize_retrieval(Retrieval, nIMGs)
 
         continue
 
@@ -192,16 +231,36 @@ while(True):
 
         Kmeans_statistics(ExempleStatistics, int(Kmax))
 
-        print("Retornades grafiques per a Kmax=",Kmax)
+        print("Retornades grafiques per a Kmax=", Kmax)
 
         continue
 
     elif seleccio == 4:
         print("Iniciant Get Shape Accuracy [SIN ACABAR]")
+
+        # print("Introdueix el valor máxim de K que vols analitzar")
+        # KMax = int(input())
+        
+        # KNNShape = initKNN(851)
+
+        # for K in range(2,KMax+1): #+1 ja que es FINS on hem de buscar la K
+        #     class_labels = KNNShape.predict(test_imgs[:851],K)
+        #     print("K = ",K,"amb precisió --> ",Get_shape_accuracy(class_labels,test_class_labels[:851]),"%")
+        
+        # print("Introdueix el valor máxim de K que vols analitzar")
+        # KMax = int(input())
+        
+        # KNNShape = Iniciar_KNN()
+
+        # for K in range(2,KMax+1): #+1 ja que es FINS on hem de buscar la K
+        #     class_labels = KNNShape.predict(test_imgs,K)
+        #     print("K = ",K,"amb precisió --> ",Get_shape_accuracy(class_labels,test_class_labels),"%")
+            
         continue
 
     elif seleccio == 5:
         print("Iniciant Get Color Accuracy [SIN ACABAR]")
+        
         continue
 
     elif seleccio == 6:
