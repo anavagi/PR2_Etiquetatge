@@ -24,135 +24,190 @@ if __name__ == '__main__':
 ##Anàlisi Qualitatiu##
 ######################
 
-
-def Retrieval_by_color(test_imgs, color_labels, Color):
+def Retrieval_by_color(test_imgs, test_labels, labels):
     found_IMGs = []
     #https://www.geeksforgeeks.org/find-common-values-between-two-numpy-arrays/
     for it, img in enumerate(test_imgs):
-       if np.array_equal(np.sort(np.intersect1d(color_labels[it], Color)), np.sort(Color)):
+       if np.array_equal(np.sort(np.intersect1d(test_labels[it], labels)), np.sort(labels)):
            found_IMGs.append(img)
 
     return np.array(found_IMGs)
 
 
-def Retrival_by_shape():
-    pass 
+def Retrieval_by_shape(train_imgs, train_labels, label): #Skarleth
+    found_IMGs = []
 
-def Retrival_combined():
-    pass
+    for it, img in enumerate(train_imgs):
+        if label in train_labels[it]:
+            found_IMGs.append(img)
+
+    return np.array(found_IMGs)
 
 ######################
 ##Anàlisi Quantitatiu#
 ######################
 
-# No pasamos la clase KMeans ya que la calculamos dentro de la función con el nº de indice
-def Kmeans_statistics(nIMG, test_imgs, Kmax):
 
-    KMean = Kmeans.KMeans(test_imgs[nIMG], 2) #2 por defecto ya que es el minimo
+def Kmeans_statistics(KMean, Kmax):
 
-    time_list, K_list, it_list = [],[],[]
+    WCD_list, K_list, it_list = [], [], []
 
-    for k in range(Kmax-1): #-1 ya que k=1 no se da
+    for i in range(Kmax-1):  # -1 ja que k=1 no es dona el cas
         K_list.append(KMean.K)
         KMean.fit()
         it_list.append(KMean.num_iter)
-        time_list.append(KMean.whitinClassDistance())
+        WCD_list.append(KMean.whitinClassDistance())
         KMean.K += 1
 
     #SRC: https://matplotlib.org/stable/tutorials/introductory/pyplot.html
-   
+
     #Gráfica WCD
-    plt.bar((K_list), (time_list))
+    plt.plot((K_list), (WCD_list))
     plt.ylabel('WCD')
     plt.show()
     #Gráfica IT
-    plt.bar((K_list), (it_list))
+    plt.plot((K_list), (it_list))
     plt.ylabel('Iteraciones')
     plt.show()
 
-    # print(time_list)
-    # print(K_list)
-    # print(it_list)
 
-def Get_shape_accuracy(labels_knn,Ground_Truth):
-    eq=[]
-    eq=(labels_knn==Ground_Truth)
-    average=np.mean(eq)
-    percentage=average*100
+def Get_shape_accuracy(labels_knn, Ground_Truth):  # Skarleth
+    eq = []
+    eq = (labels_knn == Ground_Truth)
+    average = np.mean(eq)
+    percentage = average*100
     return percentage
 
-#ground_truth imported from utils.data.py
+
 def Get_colors_accuracy(nIMG, test_imgs, ground_truth):
-    list_with_colors = [] #List to save our colors
+    list_with_colors = []  # List to save our colors
 
     #---KMEAN----
-    #cambiar el nIMG no varia el resultado
-    KMean = Kmeans.KMeans(test_imgs[nIMG], 2) #return one object
-    KMean.find_bestK(3) #Si variamos el valor varia el resultado ¡ 
+    KMean = Kmeans.KMeans(test_imgs[nIMG], 2)  # return one object
+    KMean.find_bestK(3)  # Si variamos el valor varia el resultado
     list_with_colors.append(Kmeans.get_colors(KMean.centroids))
 
-    #FUNCTION FIND_BESTK
-    '''Solo tenemos que modifcar la funcion find_bestK del Kmeans.py para que admita un parametro 
-    que corresponda al llindar.
-    Funcion entera modificada:
-    def find_bestK(self, max_K, threshold):
-        whitin_class_distance = 0  # Initialize variable
 
-        for i in range(2, max_K):
+######################
+###Funciones Utiles###
+######################
 
-            self.K = i  # Assig to the number of clusters i value
-            self.fit()  # Call fit() function
-
-            old_whitin_class_distance = whitin_class_distance  # Save the old value
-            whitin_class_distance = self.whitinClassDistance()
-
-            if i > 2:
-                per_DECk = 100 * (whitin_class_distance /
-                                  old_whitin_class_distance)
-                result_DECk = (100 - per_DECk)
-
-                if not result_DECk > threshold:
-                    self.K = i - 1
-                    break
+def Iniciar_KNN():
+    return KNN.KNN(train_imgs, train_class_labels)
 
 
-    Llamada en esta funcion:
-    KMean.find_bestK(3,20) #primero valores igual que el anterior, segundo llindar
+def Iniciar_KMeans(nConjunt, K=2):
+    #K=2 por defecto ya que es el minimo
+    return Kmeans.KMeans(test_imgs[nConjunt], K)
 
-    '''
-    result_color = 0
-    for index, colors in enumerate(list_with_colors):
+######################
+#########TEST#########
+######################
 
-        len_gt = len(ground_truth[index])
-        len_lwc = len(list_with_colors)
-        count_colors = 0
-        colors = np.unique(colors)
+
+while(True):
+
+    MSG = """Introdueix un nº en funció del test que vols fer:
+        1. Retrieval by Color [SIN ACABAR]
+        2. Retrieval by Shape
+        3. Kmeans Statistics
+        4. Get Shape Accuracy [SIN ACABAR]
+        5. Get Color Accuracy [SIN ACABAR]
+        6. Millores [SIN ACABAR]
+        7. Sortir
+    """
+
+    print(MSG)
+
+    seleccio = input()
+
+    if not seleccio:
+        print("Error, selecciona una altre vegada")
+        continue
+
+    seleccio = int(seleccio)
+
+    if seleccio > 8 or seleccio < 1 or not seleccio:
+        print("Error, selecciona una altre vegada")
+        continue
+
+    elif seleccio == 1:
+        print("Iniciant Retrieval by Color [SIN ACABAR]")
         
-        for color, color_gt in zip(colors, ground_truth[index]):
-            if color == color_gt:
-                count_colors +=1
-            
-        result_color += count_colors / len_gt
+        print("Introdueix un valor per a K")
+        K = int(input())
+        
+        Retrieval = Iniciar_KMeans(len(test_imgs),K)
+        
+        #busquem la llista de colors
+        
+        
+        
+        
+        continue
 
-    percent_labels = (result_color / len_lwc) * 100
+    elif seleccio == 2:
+        print("Iniciant Retrieval by Shape")
+        RetrievalKNN = Iniciar_KNN()
 
-    return percent_labels
+        print("Introdueix un valor per a K")
+        K = int(input())
 
+        classes = RetrievalKNN.predict(train_imgs, K)
 
-def Find_bestK():
-    pass
+        print("Introdueix el nº de imatges que vols retornar")
+        nIMGs = int(input())
 
+        while(True):
+            print("introdueix una classe que vols buscar de les següents: ")
 
+            for clase in np.unique(classes):
+                print(clase)
 
-#TEST Kmeans_statistics index=5, text_imgs, kmax=5
-# Kmeans_statistics(5, test_imgs, 5)
+            inputClase = input()
 
-#TEST get_color_accuracy index=5, text_imgs, train_color_labels
-#(nIMG, test_imgs, ground_truth)
-#print(Get_colors_accuracy(5, test_imgs, train_color_labels[:150]))
+            if inputClase in np.unique(classes):
+                break
 
-#TEST retreival_by_shape index=5, text_imgs, train_color_labels
+            print("Error, introdueix una altre vegada")
 
-#(test_imgs, train_class_labels, classe) 
-results = Retrival_by_shape(train_imgs, test_imgs, train_class_labels,['Shirts', 'Dresses'])
-visualize_retrieval(results, 10)
+        retrieval = Retrieval_by_shape(train_imgs, classes, inputClase)
+
+        visualize_retrieval(retrieval, nIMGs)
+
+        print("Retornades:", nIMGs, "imatges, tornem al menú principal. ")
+
+        continue
+
+    elif seleccio == 3:
+        print("Iniciant Kmeans Statistics")
+
+        print("Introdueix un valor per a K max")
+        Kmax = int(input())
+
+        print("Introdueix un valor per al nº de imatges que vols analitzar")
+        nConjunt = int(input())
+
+        ExempleStatistics = Iniciar_KMeans(nConjunt)
+
+        Kmeans_statistics(ExempleStatistics, int(Kmax))
+
+        print("Retornades grafiques per a Kmax=",Kmax)
+
+        continue
+
+    elif seleccio == 4:
+        print("Iniciant Get Shape Accuracy [SIN ACABAR]")
+        continue
+
+    elif seleccio == 5:
+        print("Iniciant Get Color Accuracy [SIN ACABAR]")
+        continue
+
+    elif seleccio == 6:
+        print("Iniciant apartat millores [SIN ACABAR]")
+        continue
+
+    elif seleccio == 7:
+        print("Sortint")
+        break
