@@ -118,6 +118,9 @@ def Iniciar_KmeansLabels(K=2):
 
     return labels
 
+def initKNN(nIMGs):
+    return KNN.KNN(train_imgs[:nIMGs], train_class_labels[:nIMGs])
+
 ######################
 #########TEST#########
 ######################
@@ -126,7 +129,7 @@ def Iniciar_KmeansLabels(K=2):
 while(True):
 
     MSG = """Introdueix un nº en funció del test que vols fer:
-        1. Retrieval by Color [SIN ACABAR]
+        1. Retrieval by Color
         2. Retrieval by Shape
         3. Kmeans Statistics
         4. Get Shape Accuracy [SIN ACABAR]
@@ -150,7 +153,7 @@ while(True):
         continue
 
     elif seleccio == 1:
-        print("Iniciant Retrieval by Color [SIN ACABAR]")
+        print("Iniciant Retrieval by Color")
 
         print("Introdueix un valor per a K")
         K = int(input())
@@ -159,34 +162,32 @@ while(True):
         nIMGs = int(input())
 
         test_img_labels = Iniciar_KmeansLabels()
-        
-        labels = []
-        
+        labels = [] #Colors que volem buscar
     
         while(True):
-            print("introdueix una color que vols buscar de les següents: ")
+            print("Introdueix un color que vols buscar dels següents: ")
 
             for clase in np.unique(test_img_labels):
                 print(clase)
             inputClase = input()
 
-            if inputClase in np.unique(classes):
+            if inputClase in np.unique(test_img_labels):
                 labels.append(inputClase)
-                break
-
-            print("Error, introdueix una altre vegada")
+                
+                print("Introduir un altre color (1=SI, altre nº = NO)?")
+                sino=int(input())
+                if sino==1:
+                    continue
+                else:
+                    break
         
-        
-            
-            
-
         Retrieval = Retrieval_by_color(test_imgs, test_img_labels, labels)
 
         visualize_retrieval(Retrieval, nIMGs)
-        #busquem la llista de colors
+        
         continue
 
-    elif seleccio == 2:
+    elif seleccio == 2: #CAMBIAR NOMBRE VAR CLASSES
         print("Iniciant Retrieval by Shape")
         RetrievalKNN = Iniciar_KNN()
 
@@ -215,8 +216,6 @@ while(True):
 
         visualize_retrieval(Retrieval, nIMGs)
 
-        print("Retornades:", nIMGs, "imatges, tornem al menú principal. ")
-
         continue
 
     elif seleccio == 3:
@@ -238,10 +237,30 @@ while(True):
 
     elif seleccio == 4:
         print("Iniciant Get Shape Accuracy [SIN ACABAR]")
+
+        # print("Introdueix el valor máxim de K que vols analitzar")
+        # KMax = int(input())
+        
+        # KNNShape = initKNN(851)
+
+        # for K in range(2,KMax+1): #+1 ja que es FINS on hem de buscar la K
+        #     class_labels = KNNShape.predict(test_imgs[:851],K)
+        #     print("K = ",K,"amb precisió --> ",Get_shape_accuracy(class_labels,test_class_labels[:851]),"%")
+        
+        # print("Introdueix el valor máxim de K que vols analitzar")
+        # KMax = int(input())
+        
+        # KNNShape = Iniciar_KNN()
+
+        # for K in range(2,KMax+1): #+1 ja que es FINS on hem de buscar la K
+        #     class_labels = KNNShape.predict(test_imgs,K)
+        #     print("K = ",K,"amb precisió --> ",Get_shape_accuracy(class_labels,test_class_labels),"%")
+            
         continue
 
     elif seleccio == 5:
         print("Iniciant Get Color Accuracy [SIN ACABAR]")
+        
         continue
 
     elif seleccio == 6:
