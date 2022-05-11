@@ -95,6 +95,17 @@ class KMeans:
         elif self.options['km_init'].lower() == 'custom':  # TBImplemented
             pass
 
+        elif self.options['km_init'].lower() == 'backward':
+            row_indexes = np.unique(self.X, return_index=True, axis=0)[1]
+
+            sorted_index = sorted(row_indexes)
+
+            centroids = []
+
+            for indexIT in range(self.K):
+                centroids.append(self.X[sorted_index[indexIT]]
+            self.centroids = np.flipud(np.array(centroids))
+            pass
         self.old_centroids = self.centroids
 
     def get_labels(self):
