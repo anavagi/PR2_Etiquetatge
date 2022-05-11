@@ -24,7 +24,7 @@ if __name__ == '__main__':
 ##Anàlisi Qualitatiu##
 ######################
 
-def Retrieval_by_color(test_imgs, test_labels, labels): #Erik
+def Retrieval_by_color(test_imgs, test_labels, labels):  # Erik
     found_IMGs = []
     #https://www.geeksforgeeks.org/find-common-values-between-two-numpy-arrays/
     for it, img in enumerate(test_imgs):
@@ -34,7 +34,7 @@ def Retrieval_by_color(test_imgs, test_labels, labels): #Erik
     return np.array(found_IMGs)
 
 
-def Retrieval_by_shape(train_imgs, train_labels, label): #Skarleth
+def Retrieval_by_shape(train_imgs, train_labels, label):  # Skarleth
     found_IMGs = []
 
     for it, img in enumerate(train_imgs):
@@ -48,11 +48,11 @@ def Retrieval_by_shape(train_imgs, train_labels, label): #Skarleth
 ######################
 
 
-def Kmeans_statistics(KMean, test_imgs, Kmax):  # Erik
+def Kmeans_statistics(KMean, Kmax):  # Erik
 
     WCD_list, K_list, it_list = [], [], []
 
-    for k in range(Kmax-1):  # -1 ya que k=1 no se da
+    for i in range(Kmax-1):  # -1 ya que k=1 no se da
         K_list.append(KMean.K)
         KMean.fit()
         it_list.append(KMean.num_iter)
@@ -105,6 +105,19 @@ def Iniciar_KMeans(nConjunt, K=2):
     #K=2 por defecto ya que es el minimo
     return Kmeans.KMeans(test_imgs[nConjunt], K)
 
+
+def Iniciar_KmeansLabels(K=2):
+    #K=2 por defecto ya que es el minimo
+
+    labels = []
+
+    for test_img in test_imgs:
+        tmp = Kmeans.KMeans(test_img)
+        tmp.find_bestK(K)
+        labels.append(Kmeans.get_colors(tmp.centroids))
+
+    return labels
+
 ######################
 #########TEST#########
 ######################
@@ -138,17 +151,39 @@ while(True):
 
     elif seleccio == 1:
         print("Iniciant Retrieval by Color [SIN ACABAR]")
-        
+
         print("Introdueix un valor per a K")
         K = int(input())
+
+        print("Introdueix el nº de imatges que vols retornar")
+        nIMGs = int(input())
+
+        test_img_labels = Iniciar_KmeansLabels()
         
-        Retrieval = Iniciar_KMeans(len(test_imgs),K)
+        labels = []
         
+    
+        while(True):
+            print("introdueix una color que vols buscar de les següents: ")
+
+            for clase in np.unique(test_img_labels):
+                print(clase)
+            inputClase = input()
+
+            if inputClase in np.unique(classes):
+                labels.append(inputClase)
+                break
+
+            print("Error, introdueix una altre vegada")
+        
+        
+            
+            
+
+        Retrieval = Retrieval_by_color(test_imgs, test_img_labels, labels)
+
+        visualize_retrieval(Retrieval, nIMGs)
         #busquem la llista de colors
-        
-        
-        
-        
         continue
 
     elif seleccio == 2:
@@ -176,9 +211,9 @@ while(True):
 
             print("Error, introdueix una altre vegada")
 
-        retrieval = Retrieval_by_shape(train_imgs, classes, inputClase)
+        Retrieval = Retrieval_by_shape(train_imgs, classes, inputClase)
 
-        visualize_retrieval(retrieval, nIMGs)
+        visualize_retrieval(Retrieval, nIMGs)
 
         print("Retornades:", nIMGs, "imatges, tornem al menú principal. ")
 
@@ -195,9 +230,9 @@ while(True):
 
         ExempleStatistics = Iniciar_KMeans(nConjunt)
 
-        Kmeans_statistics(ExempleStatistics, test_imgs, int(Kmax))
+        Kmeans_statistics(ExempleStatistics, int(Kmax))
 
-        print("Retornades grafiques per a Kmax=",Kmax)
+        print("Retornades grafiques per a Kmax=", Kmax)
 
         continue
 
