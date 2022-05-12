@@ -2,6 +2,7 @@ __authors__ = ['1489845', '1529079', '1600715']
 # Nota: 1489845 i 1529079 pertanyen al grup DL17 i 1600715 pertany al grup DJ08
 __group__ = ['DL17', 'DJ08']
 
+# from os import pread
 import numpy as np
 import Kmeans
 import KNN
@@ -83,15 +84,39 @@ def Get_shape_accuracy(labels_knn, Ground_Truth):  # Skarleth
     return percentage
 
 
-def Get_colors_accuracy(nIMG, test_imgs, ground_truth):  # Ana
-    list_with_colors = []  # List to save our colors
+def Get_colors_accuracy(nIMG, kmax, test_imgs, ground_truth):  # Ana
 
+    '''
+    color_accuracy = list_with_colors = labels_Kmeans
+    train_color_labels[150] = ground truth
+    my parameters: nImg, test_imgs instead of color_accuracy
+    '''
+    list_with_colors = []  # List to save our colors
+    value_colors = 0
     #---KMEAN----
     #cambiar el nIMG no varia el resultado
-    KMean = Kmeans.KMeans(test_imgs[nIMG], 2)  # return one object
-    KMean.find_bestK(3)  # Si variamos el valor varia el resultado ¡
+    KMean = Kmeans.KMeans(test_imgs[nIMG])  # return one object
+    KMean.find_bestK(kmax)  # 20 por defecto, Si variamos el valor varia el resultado
     list_with_colors.append(Kmeans.get_colors(KMean.centroids))
 
+    #BODY FUNCION
+    #print("LIST WITH COLORS",list_with_colors)
+    for index, colors in enumerate(list_with_colors):
+        colors = np.unique(colors)
+        #print("UNIQUE COLORS",colors)
+
+        same_colors = 0
+        len_gt = len(ground_truth[index])
+        len_lwc = len(list_with_colors)
+
+        for color, color_gt in zip(colors, ground_truth[index]):
+            # print("color: ",color,"color_gt", color_gt)
+            if color == color_gt:
+                same_colors +=1
+        
+        value_colors += same_colors / len_gt
+    result_percent = (value_colors / len_lwc )*100
+    return result_percent
 
 ######################
 ###Funciones Utiles###
@@ -129,7 +154,7 @@ def initKNN(nIMGs):
 while(True):
 
     MSG = """Introdueix un nº en funció del test que vols fer:
-        1. Retrieval by Color
+        1. Retrieval by Color [SIN ACABAR]
         2. Retrieval by Shape
         3. Kmeans Statistics
         4. Get Shape Accuracy [SIN ACABAR]
@@ -189,7 +214,7 @@ while(True):
         continue
 
     elif seleccio == 2: #CAMBIAR NOMBRE VAR CLASSES
-        print("Iniciant Retrieval by Shape")
+        print("Iniciant Retrieval by Shape [OK]")
         RetrievalKNN = Iniciar_KNN()
 
         print("Introdueix un valor per a K")
@@ -220,7 +245,7 @@ while(True):
         continue
 
     elif seleccio == 3:
-        print("Iniciant Kmeans Statistics")
+        print("Iniciant Kmeans Statistics [OK]")
 
         print("Introdueix un valor per a K max")
         Kmax = int(input())
@@ -237,31 +262,39 @@ while(True):
         continue
 
     elif seleccio == 4:
-        print("Iniciant Get Shape Accuracy [SIN ACABAR]")
+        print("Iniciant Get Shape Accuracy [RETOCAR COSITAS, PERO OK]")
 
-        # print("Introdueix el valor máxim de K que vols analitzar")
-        # KMax = int(input())
+        print("Introdueix el valor máxim de K que vols analitzar")
+        KMax = int(input())
         
-        # KNNShape = initKNN(851)
+        KNNShape = initKNN(851)
 
-        # for K in range(2,KMax+1): #+1 ja que es FINS on hem de buscar la K
-        #     class_labels = KNNShape.predict(test_imgs[:851],K)
-        #     print("K = ",K,"amb precisió --> ",Get_shape_accuracy(class_labels,test_class_labels[:851]),"%")
+        for K in range(2,KMax+1): #+1 ja que es FINS on hem de buscar la K
+            class_labels = KNNShape.predict(test_imgs[:851],K)
+            print("K = ",K,"amb precisió --> ",Get_shape_accuracy(class_labels,test_class_labels[:851]),"%")
         
-        # print("Introdueix el valor máxim de K que vols analitzar")
-        # KMax = int(input())
+        print("Introdueix el valor máxim de K que vols analitzar")
+        KMax = int(input())
         
-        # KNNShape = Iniciar_KNN()
+        KNNShape = Iniciar_KNN()
 
-        # for K in range(2,KMax+1): #+1 ja que es FINS on hem de buscar la K
-        #     class_labels = KNNShape.predict(test_imgs,K)
-        #     print("K = ",K,"amb precisió --> ",Get_shape_accuracy(class_labels,test_class_labels),"%")
+        for K in range(2,KMax+1): #+1 ja que es FINS on hem de buscar la K
+            class_labels = KNNShape.predict(test_imgs,K)
+            print("K = ",K,"amb precisió --> ",Get_shape_accuracy(class_labels,test_class_labels),"%")
             
         continue
 
     elif seleccio == 5:
         print("Iniciant Get Color Accuracy [SIN ACABAR]")
-        
+
+        print("Introdueix el nº de imatges que vols retornar")
+        nIMGs = int(input())
+
+        print("Introdueix el valor máxim de K que vols analitzar")
+        KMax = int(input())
+
+        result = Get_colors_accuracy(nIMGs, KMax , test_imgs, train_color_labels[:150])
+        print("Percentatge del algorisme: ", result)
         continue
 
     elif seleccio == 6:
