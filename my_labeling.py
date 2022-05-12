@@ -9,17 +9,6 @@ from utils_data import read_dataset, visualize_k_means, visualize_retrieval
 import matplotlib.pyplot as plt
 #import cv2
 
-if __name__ == '__main__':
-
-    #Load all the images and GT
-    train_imgs, train_class_labels, train_color_labels, \
-        test_imgs, test_class_labels, test_color_labels = read_dataset(
-            ROOT_FOLDER='./images/', gt_json='./images/gt.json')
-
-    #List with all the existant classes
-    classes = list(set(list(train_class_labels) + list(test_class_labels)))
-
-
 ######################
 ##Anàlisi Qualitatiu##
 ######################
@@ -83,22 +72,23 @@ def Get_shape_accuracy(labels_knn, Ground_Truth):  # Skarleth
     return percentage
 
 
-def Get_colors_accuracy(nIMG, test_imgs, ground_truth):  # Ana
-    list_with_colors = []  # List to save our colors
+if __name__ == '__main__':
 
-    #---KMEAN----
-    #cambiar el nIMG no varia el resultado
-    KMean = Kmeans.KMeans(test_imgs[nIMG], 2)  # return one object
-    KMean.find_bestK(3)  # Si variamos el valor varia el resultado ¡
-    list_with_colors.append(Kmeans.get_colors(KMean.centroids))
+    #Load all the images and GT
+    train_imgs, train_class_labels, train_color_labels, \
+        test_imgs, test_class_labels, test_color_labels = read_dataset(
+            ROOT_FOLDER='./images/', gt_json='./images/gt.json')
+
+    #List with all the existant classes
+    classes = list(set(list(train_class_labels) + list(test_class_labels)))
 
 
 ######################
 ###Funciones Utiles###
 ######################
 
-def Iniciar_KNN():
-    return KNN.KNN(train_imgs, train_class_labels)
+def Iniciar_KNN(nConjunt=len(train_imgs)):
+    return KNN.KNN(train_imgs[:nConjunt], train_class_labels[:nConjunt])
 
 
 def Iniciar_KMeans(nConjunt, K=2):
@@ -118,9 +108,6 @@ def Iniciar_KmeansLabels(K=2):
 
     return labels
 
-def initKNN(nIMGs):
-    return KNN.KNN(train_imgs[:nIMGs], train_class_labels[:nIMGs])
-
 ######################
 #########TEST#########
 ######################
@@ -132,12 +119,10 @@ while(True):
         1. Retrieval by Color
         2. Retrieval by Shape
         3. Kmeans Statistics
-        4. Get Shape Accuracy [SIN ACABAR]
-        5. Get Color Accuracy [SIN ACABAR]
-        6. Millores [SIN ACABAR]
-        7. Sortir
+        4. Get Shape Accuracy
+        5. Millores [SIN ACABAR]
+        6. Sortir
     """
-
     print(MSG)
 
     seleccio = input()
@@ -148,7 +133,7 @@ while(True):
 
     seleccio = int(seleccio)
 
-    if seleccio > 8 or seleccio < 1 or not seleccio:
+    if seleccio > 7 or seleccio < 1 or not seleccio:
         print("Error, selecciona una altre vegada")
         continue
 
@@ -162,9 +147,8 @@ while(True):
         nIMGs = int(input())
 
         test_img_labels = Iniciar_KmeansLabels()
-        print(test_img_labels)
-        labels = [] #Colors que volem buscar
-    
+        labels = []  # Colors que volem buscar
+
         while(True):
             print("Introdueix un color que vols buscar dels següents: ")
 
@@ -174,28 +158,28 @@ while(True):
 
             if inputClase in np.unique(test_img_labels):
                 labels.append(inputClase)
-                
+
                 print("Introduir un altre color (1=SI, altre nº = NO)?")
-                sino=int(input())
-                if sino==1:
+                sino = int(input())
+                if sino == 1:
                     continue
                 else:
                     break
-        
+
         Retrieval = Retrieval_by_color(test_imgs, test_img_labels, labels)
 
         visualize_retrieval(Retrieval, nIMGs)
-        
+
         continue
 
-    elif seleccio == 2: #CAMBIAR NOMBRE VAR CLASSES
+    elif seleccio == 2:
         print("Iniciant Retrieval by Shape")
         RetrievalKNN = Iniciar_KNN()
 
         print("Introdueix un valor per a K")
         K = int(input())
 
-        classes = RetrievalKNN.predict(train_imgs, K)
+        nClasses = RetrievalKNN.predict(train_imgs, K)
 
         print("Introdueix el nº de imatges que vols retornar")
         nIMGs = int(input())
@@ -203,17 +187,17 @@ while(True):
         while(True):
             print("introdueix una classe que vols buscar de les següents: ")
 
-            for clase in np.unique(classes):
+            for clase in np.unique(nClasses):
                 print(clase)
 
             inputClase = input()
 
-            if inputClase in np.unique(classes):
+            if inputClase in np.unique(nClasses):
                 break
 
             print("Error, introdueix una altre vegada")
 
-        Retrieval = Retrieval_by_shape(train_imgs, classes, inputClase)
+        Retrieval = Retrieval_by_shape(train_imgs, nClasses, inputClase)
 
         visualize_retrieval(Retrieval, nIMGs)
 
@@ -225,8 +209,9 @@ while(True):
         print("Introdueix un valor per a K max")
         Kmax = int(input())
 
-        print("Introdueix un valor per al nº de imatges que vols analitzar")
-        nConjunt = int(input())
+        print("Introdueix un valor per al nº de imatges que vols analitzar ( Max: ", len(
+            test_imgs), ")")
+        nConjunt = int(input())-1  # Restem 1 ja que comença per 0
 
         ExempleStatistics = Iniciar_KMeans(nConjunt)
 
@@ -237,37 +222,25 @@ while(True):
         continue
 
     elif seleccio == 4:
-        print("Iniciant Get Shape Accuracy [SIN ACABAR]")
+        print("Iniciant Get Shape Accuracy")
 
-        # print("Introdueix el valor máxim de K que vols analitzar")
-        # KMax = int(input())
-        
-        # KNNShape = initKNN(851)
+        print("Introdueix el valor máxim de K que vols analitzar")
+        KMax = int(input())
 
-        # for K in range(2,KMax+1): #+1 ja que es FINS on hem de buscar la K
-        #     class_labels = KNNShape.predict(test_imgs[:851],K)
-        #     print("K = ",K,"amb precisió --> ",Get_shape_accuracy(class_labels,test_class_labels[:851]),"%")
-        
-        # print("Introdueix el valor máxim de K que vols analitzar")
-        # KMax = int(input())
-        
-        # KNNShape = Iniciar_KNN()
+        print("Introdueix el nº d'imatges que vols analitzar ( max:", len(train_imgs), ")")
+        nConjunt = int(input())
 
-        # for K in range(2,KMax+1): #+1 ja que es FINS on hem de buscar la K
-        #     class_labels = KNNShape.predict(test_imgs,K)
-        #     print("K = ",K,"amb precisió --> ",Get_shape_accuracy(class_labels,test_class_labels),"%")
-            
+        KNNShape = Iniciar_KNN(nConjunt)
+
+        for K in range(2, KMax+1):  # +1 ja que es FINS on hem de buscar la K
+            labels = KNNShape.predict(test_imgs[:nConjunt], K)
+            print("K = ", K, "amb precisió --> ", Get_shape_accuracy(labels, test_class_labels[:nConjunt]), "%")
         continue
 
     elif seleccio == 5:
-        print("Iniciant Get Color Accuracy [SIN ACABAR]")
-        
-        continue
-
-    elif seleccio == 6:
         print("Iniciant apartat millores [SIN ACABAR]")
         continue
 
-    elif seleccio == 7:
-        print("Sortint")
+    elif seleccio == 6:
+        print("Exit")
         break
