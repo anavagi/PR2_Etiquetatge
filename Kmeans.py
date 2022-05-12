@@ -170,35 +170,43 @@ class KMeans:
 
         return (WCD/self.X.shape[0])
 
-    def find_bestK(self, max_K):
+    # def find_bestK(self, max_K):
+    def find_bestK(self, max_K, threshold=20):
         """
          sets the best k anlysing the results up to 'max_K' clusters
         """
-        whitin_class_distance = 0  # Initialize variable
-
+        self.K = 1  # Assig 1 for clases value
+        self.fit()  # Call fit() function
+        K_ideal = False
+        whitin_class_distance = 0
         #Loop in range from 2 (defined value) to max_K
-        for i in range(2, max_K):
+        for i in range(2, max_K+1):
 
             self.K = i  # Assig to the number of clusters i value
+            
+
+            old_whitin_class_distance = self.whitinClassDistance()  # Save the old value
+            print("old",old_whitin_class_distance)
+
             self.fit()  # Call fit() function
 
-            old_whitin_class_distance = whitin_class_distance  # Save the old value
             # Keep whitinClassDistance() return value
-            whitin_class_distance = self.whitinClassDistance()
+            new_whitin_class_distance = self.whitinClassDistance()
+            print("new",new_whitin_class_distance)
+            print("--------------")
 
-            #Loop for i bigger than the defined value
-            if i > 2:
-                #Dec function 100 * (WDCk / WDCk-1)
-                per_DECk = 100 * (whitin_class_distance /
-                                  old_whitin_class_distance)
-                result_DECk = (100 - per_DECk)
 
-                threshold = 20  # Example 20%
-                #If result if smaller than 20 asign the previous K value (i-1)
-                if not result_DECk > threshold:
-                    self.K = i - 1
-                    break
-                #if result_DECk is bigger K = max_K
+            #Dec function 100 * (WDCk / WDCk-1)
+            per_DECk = 100 * (new_whitin_class_distance / old_whitin_class_distance)
+            result_DECk = (100 - per_DECk)
+            #If result if smaller than the threshold asign the previous K value (i-1)
+            if not result_DECk > threshold:
+                self.K = i - 1
+                break
+
+            
+
+
 
 
 def distance(X, C):
