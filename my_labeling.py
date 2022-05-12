@@ -162,6 +162,7 @@ while(True):
         nIMGs = int(input())
 
         test_img_labels = Iniciar_KmeansLabels()
+        print(test_img_labels)
         labels = [] #Colors que volem buscar
     
         while(True):

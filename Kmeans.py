@@ -103,7 +103,7 @@ class KMeans:
             centroids = []
 
             for indexIT in range(self.K):
-                centroids.append(self.X[sorted_index[indexIT]]
+                centroids.append(self.X[sorted_index[indexIT]])
             self.centroids = np.flipud(np.array(centroids))
             pass
         self.old_centroids = self.centroids
