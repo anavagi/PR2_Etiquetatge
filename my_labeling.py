@@ -237,10 +237,10 @@ while(True):
         continue
 
     elif seleccio == 5:
-        print("Iniciant apartat millores [SIN ACABAR]")
+        print("Iniciant apartat millores [Solo Llindar]")
         
         print("Llindar:")
-        kmeanLlindar = Iniciar_KMeans(850)
+        kmeanLlindar = Iniciar_KMeans()
         
         Llindar=0
         KList=[]
@@ -254,7 +254,7 @@ while(True):
           Llindar+=10
         
         plt.plot((LlindarList), (KList))
-        plt.ylabel('Llindar respecte de K')
+        plt.xlabel('Llindar respecte de K')
         plt.show()
         
         continue
