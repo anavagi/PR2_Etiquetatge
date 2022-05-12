@@ -209,8 +209,7 @@ while(True):
         print("Introdueix un valor per a K max")
         Kmax = int(input())
 
-        print("Introdueix un valor per al nº de imatges que vols analitzar ( Max: ", len(
-            test_imgs), ")")
+        print("Introdueix un valor per al nº de imatges que vols analitzar ( Max: ", len(test_imgs), ")")
         nConjunt = int(input())-1  # Restem 1 ja que comença per 0
 
         ExempleStatistics = Iniciar_KMeans(nConjunt)
@@ -239,6 +238,25 @@ while(True):
 
     elif seleccio == 5:
         print("Iniciant apartat millores [SIN ACABAR]")
+        
+        print("Llindar:")
+        kmeanLlindar = Iniciar_KMeans(850)
+        
+        Llindar=0
+        KList=[]
+        LlindarList=[]
+        
+        for i in range(11):
+          kmeanLlindar.find_bestK(6,Llindar) 
+          #print("BEST K amb llindar =",Llindar,"-->",kmeanLlindar.K)
+          LlindarList.append(Llindar)
+          KList.append(kmeanLlindar.K)
+          Llindar+=10
+        
+        plt.plot((LlindarList), (KList))
+        plt.ylabel('Llindar respecte de K')
+        plt.show()
+        
         continue
 
     elif seleccio == 6:
