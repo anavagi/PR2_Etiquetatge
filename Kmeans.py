@@ -92,7 +92,7 @@ class KMeans:
         elif self.options['km_init'].lower() == 'random':  # K random dots
             self.centroids = np.random.rand(self.K, self.X.shape[1])
 
-        elif self.options['km_init'].lower() == 'custom':  # TBImplemented
+        elif self.options['km_init'].lower() == '':  # TBImplemented
             pass
 
         elif self.options['km_init'].lower() == 'backward':
@@ -145,15 +145,15 @@ class KMeans:
         self._init_centroids()
         self.get_labels()
         self.get_centroids()
-        
+
         #Loop verificates if converges
         while self.converges() == False:
             #Verificate if the number of iterations are smaller than the maximum number.
             if self.num_iter < self.options['max_iter']:
-                #Set labels and calculates new centroids 
+                #Set labels and calculates new centroids
                 self.get_labels()
                 self.get_centroids()
-                
+
                 #Increase the number of iterations
                 self.num_iter += 1
             else:
@@ -170,35 +170,57 @@ class KMeans:
 
         return (WCD/self.X.shape[0])
 
-    def find_bestK(self, max_K):
+    def interClassDistance(self):
+        ICD = 0
+        
+        for cIt in range(self.centroids.shape[0]):
+            c1 = self.X[self.labels == cIt]
+            c2 = self.X[self.labels == cIt+1]
+            
+            if not c1 or not c2:
+                continue
+            
+            for c1It in c1:
+                ICD += np.linalg.norm(c1It-c2)
+        
+        return (ICD/self.X.shape[0])
+
+    def find_bestK(self, max_K, threshold=20, method="WCD"):
         """
          sets the best k anlysing the results up to 'max_K' clusters
         """
-        whitin_class_distance = 0  # Initialize variable
+        self.K = 1  # Assig 1 for clases value
+        self.fit()  # Call fit() function
 
         #Loop in range from 2 (defined value) to max_K
-        for i in range(2, max_K):
+        for i in range(2, max_K+1):
 
             self.K = i  # Assig to the number of clusters i value
+
+            if method == "WCD":
+                old_whitin_class_distance = self.whitinClassDistance()  # Save the old value
+            elif method == "ICD":
+                old_whitin_class_distance = self.interClassDistance()
+            elif method == "FD":
+                old_whitin_class_distance = (self.whitinClassDistance()/self.interClassDistance())
+
             self.fit()  # Call fit() function
+            
+            if method == "WCD":
+                new_whitin_class_distance = self.whitinClassDistance()
+            elif method == "ICD":
+                new_whitin_class_distance = self.interClassDistance()
+            elif method == "FD":
+                new_whitin_class_distance = (self.whitinClassDistance()/self.interClassDistance())
 
-            old_whitin_class_distance = whitin_class_distance  # Save the old value
-            # Keep whitinClassDistance() return value
-            whitin_class_distance = self.whitinClassDistance()
-
-            #Loop for i bigger than the defined value
-            if i > 2:
-                #Dec function 100 * (WDCk / WDCk-1)
-                per_DECk = 100 * (whitin_class_distance /
-                                  old_whitin_class_distance)
-                result_DECk = (100 - per_DECk)
-
-                threshold = 20  # Example 20%
-                #If result if smaller than 20 asign the previous K value (i-1)
-                if not result_DECk > threshold:
-                    self.K = i - 1
-                    break
-                #if result_DECk is bigger K = max_K
+            #Dec function 100 * (WDCk / WDCk-1)
+            per_DECk = 100 * (new_whitin_class_distance /
+                              old_whitin_class_distance)
+            result_DECk = (100 - per_DECk)
+            #If result if smaller than the threshold asign the previous K value (i-1)
+            if not result_DECk > threshold:
+                self.K = i - 1
+                break
 
 
 def distance(X, C):
@@ -253,4 +275,3 @@ def get_colors(centroids):
         # We use as an index the first max value we found (SOURCE: https://numpy.org/doc/stable/reference/generated/numpy.argmax.html)
         lables.append(utils.colors[np.argmax(probability)])
     return lables
-    
