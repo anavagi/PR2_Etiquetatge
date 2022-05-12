@@ -177,9 +177,6 @@ class KMeans:
             c1 = self.X[self.labels == cIt]
             c2 = self.X[self.labels == cIt+1]
             
-            if not c1 or not c2:
-                continue
-            
             for c1It in c1:
                 ICD += np.linalg.norm(c1It-c2)
         
