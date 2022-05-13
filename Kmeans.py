@@ -76,11 +76,15 @@ class KMeans:
         if self.K <= 0:
             return
 
-        if self.options['km_init'].lower() == 'first':  # The first K dots
+        # The first/last K dots
+        if self.options['km_init'].lower() == 'first' or self.options['km_init'].lower() == 'last':
             #SOURCE: https://stackoverflow.com/questions/54140523/retain-order-when-taking-unique-rows-in-a-numpy-array
             row_indexes = np.unique(self.X, return_index=True, axis=0)[1]
 
             sorted_index = sorted(row_indexes)
+
+            if self.options['km_init'].lower() == 'first':
+                sorted_index = np.flipud(sorted_index)
 
             centroids = []
 
@@ -91,22 +95,6 @@ class KMeans:
 
         elif self.options['km_init'].lower() == 'random':  # K random dots
             self.centroids = np.random.rand(self.K, self.X.shape[1])
-
-        elif self.options['km_init'].lower() == '':  # TBImplemented
-            pass
-
-        elif self.options['km_init'].lower() == 'backward':
-            row_indexes = np.unique(self.X, return_index=True, axis=0)[1]
-
-            sorted_index = sorted(row_indexes)
-
-            centroids = []
-
-            for indexIT in range(self.K):
-                centroids.append(self.X[sorted_index[indexIT]])
-            self.centroids = np.flipud(np.array(centroids))
-            pass
-        self.old_centroids = self.centroids
 
     def get_labels(self):
         """        Calculates the closest centroid of all points in X
@@ -166,20 +154,21 @@ class KMeans:
         WCD = 0
 
         for cIt in range(self.centroids.shape[0]):
-            WCD += (np.linalg.norm(self.X[(self.labels == cIt)] - self.centroids[cIt])) ** 2
+            WCD += (np.linalg.norm(self.X[(self.labels ==
+                    cIt)] - self.centroids[cIt])) ** 2
 
         return (WCD/self.X.shape[0])
 
     def interClassDistance(self):
         ICD = 0
-        
+
         for cIt in range(self.centroids.shape[0]):
             c1 = self.X[self.labels == cIt]
             c2 = self.X[self.labels == cIt+1]
-            
+
             for c1It in c1:
                 ICD += np.linalg.norm(c1It-c2)
-        
+
         return (ICD/self.X.shape[0])
 
     def find_bestK(self, max_K, threshold=20, method="WCD"):
@@ -199,16 +188,18 @@ class KMeans:
             elif method == "ICD":
                 old_whitin_class_distance = self.interClassDistance()
             elif method == "FD":
-                old_whitin_class_distance = (self.whitinClassDistance()/self.interClassDistance())
+                old_whitin_class_distance = (
+                    self.whitinClassDistance()/self.interClassDistance())
 
             self.fit()  # Call fit() function
-            
+
             if method == "WCD":
                 new_whitin_class_distance = self.whitinClassDistance()
             elif method == "ICD":
                 new_whitin_class_distance = self.interClassDistance()
             elif method == "FD":
-                new_whitin_class_distance = (self.whitinClassDistance()/self.interClassDistance())
+                new_whitin_class_distance = (
+                    self.whitinClassDistance()/self.interClassDistance())
 
             #Dec function 100 * (WDCk / WDCk-1)
             per_DECk = 100 * (new_whitin_class_distance /
