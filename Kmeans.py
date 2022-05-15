@@ -158,16 +158,14 @@ class KMeans:
                     cIt)] - self.centroids[cIt])) ** 2
 
         return (WCD/self.X.shape[0])
-
+  
     def interClassDistance(self):
         ICD = 0
 
-        for cIt in range(self.centroids.shape[0]):
+        for cIt in range(0,self.centroids.shape[0]):
             c1 = self.X[self.labels == cIt]
-            c2 = self.X[self.labels == cIt+1]
-
             for c1It in c1:
-                ICD += np.linalg.norm(c1It-c2)
+                ICD += np.linalg.norm(c1It-c1)
 
         return (ICD/self.X.shape[0])
 
