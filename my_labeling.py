@@ -87,9 +87,8 @@ if __name__ == '__main__':
 ###Funciones Utiles###
 ######################
 
-def Iniciar_KNN(nConjunt=len(train_imgs)):
-    return KNN.KNN(train_imgs[:nConjunt], train_class_labels[:nConjunt])
-
+def Iniciar_KNN(nConjunt=len(train_imgs), res="Default"):
+    return KNN.KNN(train_imgs[:nConjunt], train_class_labels[:nConjunt],res)
 
 def Iniciar_KMeans(nConjunt, K=2):
     #K=2 por defecto ya que es el minimo
@@ -120,7 +119,7 @@ while(True):
         2. Retrieval by Shape
         3. Kmeans Statistics
         4. Get Shape Accuracy
-        5. Millores [SIN ACABAR]
+        5. Llindar
         6. Sortir
     """
     print(MSG)
@@ -165,6 +164,7 @@ while(True):
                     continue
                 else:
                     break
+                
 
         Retrieval = Retrieval_by_color(test_imgs, test_img_labels, labels)
 
@@ -174,12 +174,16 @@ while(True):
 
     elif seleccio == 2:
         print("Iniciant Retrieval by Shape")
-        RetrievalKNN = Iniciar_KNN()
+        
+        print("Introdueix resolució que vols revisar -> default, half or fourth ")
+        res = input()
+        
+        RetrievalKNN = Iniciar_KNN(len(train_imgs),res)
 
         print("Introdueix un valor per a K")
         K = int(input())
 
-        nClasses = RetrievalKNN.predict(train_imgs, K)
+        nClasses = RetrievalKNN.predict(train_imgs, K, res)
 
         print("Introdueix el nº de imatges que vols retornar")
         nIMGs = int(input())
@@ -237,10 +241,10 @@ while(True):
         continue
 
     elif seleccio == 5:
-        print("Iniciant apartat millores [Solo Llindar]")
+        print("Iniciant apartat millores (Gráfica Llindar)")
         
         print("Llindar:")
-        kmeanLlindar = Iniciar_KMeans()
+        kmeanLlindar = Iniciar_KMeans(850)
         
         Llindar=0
         KList=[]
@@ -248,7 +252,7 @@ while(True):
         
         for i in range(11):
           kmeanLlindar.find_bestK(6,Llindar) 
-          #print("BEST K amb llindar =",Llindar,"-->",kmeanLlindar.K)
+          print("BEST K amb llindar =",Llindar,"-->",kmeanLlindar.K)
           LlindarList.append(Llindar)
           KList.append(kmeanLlindar.K)
           Llindar+=10
